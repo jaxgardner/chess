@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -51,7 +52,90 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+
+    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        int myCurrentRow = myPosition.getRow();
+        int myCurrentColumn = myPosition.getColumn();
+        //Check forward-right diagonal
+        while(myCurrentRow < 8 && myCurrentColumn < 8){
+            myCurrentRow +=1;
+            myCurrentColumn +=1;
+            ChessPiece positionPiece = board.getPiece(new ChessPosition(myCurrentRow , myCurrentColumn ));
+
+            if(positionPiece != null){
+                if(positionPiece.getTeamColor() == this.pieceColor){
+                    continue;
+                }
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+            }
+
+        }
+
+         myCurrentRow = myPosition.getRow();
+         myCurrentColumn = myPosition.getColumn();
+
+        //Check forward-left diagonal
+        while(myCurrentRow > 1 && myCurrentColumn < 8){
+            myCurrentRow--;
+            myCurrentColumn ++;
+            ChessPiece positionPiece = board.getPiece(new ChessPosition(myCurrentRow , myCurrentColumn ));
+
+            if(positionPiece != null){
+                if(positionPiece.getTeamColor() == this.pieceColor){
+                    continue;
+                }
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+            }
+
+        }
+
+        myCurrentRow = myPosition.getRow();
+        myCurrentColumn = myPosition.getColumn();
+        //Check backward-right diagonal
+
+        while(myCurrentRow < 8 && myCurrentColumn > 1){
+            myCurrentRow++;
+            myCurrentColumn--;
+            ChessPiece positionPiece = board.getPiece(new ChessPosition(myCurrentRow , myCurrentColumn ));
+
+            if(positionPiece != null){
+                if(positionPiece.getTeamColor() == this.pieceColor){
+                    continue;
+                }
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+            }
+
+        }
+        myCurrentRow = myPosition.getRow();
+        myCurrentColumn = myPosition.getColumn();
+        //Check backward-left diagonal
+        while(myCurrentRow > 1  && myCurrentColumn > 1){
+            myCurrentRow--;
+            myCurrentColumn--;
+            ChessPiece positionPiece = board.getPiece(new ChessPosition(myCurrentRow , myCurrentColumn ));
+
+            if(positionPiece != null){
+                if(positionPiece.getTeamColor() == this.pieceColor){
+                    continue;
+                }
+            }
+            else {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+            }
+
+        }
+
+        return moves;
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return bishopMoves(board, myPosition);
     }
 }
