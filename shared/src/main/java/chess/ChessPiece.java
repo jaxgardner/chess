@@ -65,7 +65,10 @@ public class ChessPiece {
 
             if(positionPiece != null){
                 if(positionPiece.getTeamColor() == this.pieceColor){
-                    continue;
+                    break;
+                } else {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+                    break;
                 }
             }
             else {
@@ -85,7 +88,10 @@ public class ChessPiece {
 
             if(positionPiece != null){
                 if(positionPiece.getTeamColor() == this.pieceColor){
-                    continue;
+                    break;
+                } else {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+                    break;
                 }
             }
             else {
@@ -105,7 +111,10 @@ public class ChessPiece {
 
             if(positionPiece != null){
                 if(positionPiece.getTeamColor() == this.pieceColor){
-                    continue;
+                    break;
+                } else {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+                    break;
                 }
             }
             else {
@@ -123,7 +132,10 @@ public class ChessPiece {
 
             if(positionPiece != null){
                 if(positionPiece.getTeamColor() == this.pieceColor){
-                    continue;
+                    break;
+                } else {
+                    moves.add(new ChessMove(myPosition, new ChessPosition(myCurrentRow , myCurrentColumn ), null));
+                    break;
                 }
             }
             else {
