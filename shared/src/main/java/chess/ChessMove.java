@@ -19,6 +19,11 @@ public class ChessMove {
         this.promotionPiece = promotionPiece;
     }
 
+    @Override
+    public String toString() {
+        return "ChessMove{Start Position: " + this.startPosition + " End Position: " + this.endPosition + '}';
+    }
+
     /**
      * @return ChessPosition of starting location
      */
