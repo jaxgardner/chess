@@ -164,7 +164,28 @@ public class ChessPiece {
     private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition){
         HashSet<ChessMove> moves = new HashSet<>();
 
+        int[][] possibleCoordinates = {
+                {myPosition.getRow() + 1, myPosition.getColumn()},
+                {myPosition.getRow() + 1, myPosition.getColumn() + 1},
+                {myPosition.getRow(), myPosition.getColumn() + 1},
+                {myPosition.getRow() - 1, myPosition.getColumn() + 1},
+                {myPosition.getRow() - 1, myPosition.getColumn()},
+                {myPosition.getRow() - 1, myPosition.getColumn() - 1},
+                {myPosition.getRow(), myPosition.getColumn() -1},
+                {myPosition.getRow() + 1, myPosition.getColumn() - 1}
+        };
 
+        for(int i = 0; i < 8; i++){
+            int[] current = possibleCoordinates[i];
+            if(isValidCoordinates(current[0], current[1])){
+                ChessPosition endLocation = new ChessPosition(current[0], current[1]);
+                if(board.getPiece(endLocation) == null){
+                    moves.add(new ChessMove(myPosition, endLocation, null));
+                } else if (board.getPiece(endLocation).pieceColor != this.pieceColor){
+                    moves.add(new ChessMove(myPosition, endLocation, null));
+                }
+            }
+        }
 
         return moves;
     }
@@ -176,7 +197,6 @@ public class ChessPiece {
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition){
         HashSet<ChessMove> moves = new HashSet<>();
-
 
         int[][] possibleCoordinates = {
                 {myPosition.getRow() + 2, myPosition.getColumn() + 1},
