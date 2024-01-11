@@ -195,6 +195,8 @@ public class ChessPiece {
                 ChessPosition endLocation = new ChessPosition(current[0], current[1]);
                 if(board.getPiece(endLocation) == null){
                     moves.add(new ChessMove(myPosition, endLocation, null));
+                } else if (board.getPiece(endLocation).pieceColor != this.pieceColor){
+                    moves.add(new ChessMove(myPosition, endLocation, null));
                 }
             }
         }
