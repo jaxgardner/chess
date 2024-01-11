@@ -126,7 +126,6 @@ public class ChessPiece {
             }
 
         }
-
          myCurrentRow = myPosition.getRow();
          myCurrentColumn = myPosition.getColumn();
 
@@ -265,6 +264,74 @@ public class ChessPiece {
     }
 
     private void pawnMoves(ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
+        int[][] possibleCoordinates = new int[4][2];
+        int row = myPosition.getRow();
+        int column = myPosition.getColumn();
+
+        boolean atStart = false;
+
+        if(this.pieceColor == ChessGame.TeamColor.BLACK){
+            possibleCoordinates[0][0] = row - 1;
+            possibleCoordinates[0][1] = column - 1;
+            possibleCoordinates[1][0] = row - 1;
+            possibleCoordinates[1][1] = column;
+            possibleCoordinates[2][0] = row - 1;
+            possibleCoordinates[2][1] = column + 1;
+
+            // Maybe start position
+            if(row == 7){
+                atStart = true;
+                possibleCoordinates[3][0] = row - 2;
+                possibleCoordinates[3][1] = column;
+            }
+        } else {
+            possibleCoordinates[0][0] = row + 1;
+            possibleCoordinates[0][1] = column - 1;
+            possibleCoordinates[1][0] = row + 1;
+            possibleCoordinates[1][1] = column;
+            possibleCoordinates[2][0] = row + 1;
+            possibleCoordinates[2][1] = column + 1;
+
+            // Maybe start position
+            if(row == 2){
+                atStart = true;
+                possibleCoordinates[3][0] = row + 2;
+                possibleCoordinates[3][1] = column;
+            }
+        }
+
+
+        for(int i = 0; i < 3; i++){
+            ChessPosition endPosition;
+            if(isValidCoordinates(possibleCoordinates[i][0], possibleCoordinates[i][1])){
+                endPosition = new ChessPosition(possibleCoordinates[i][0], possibleCoordinates[i][1]);
+            } else {
+                continue;
+            }
+
+            if(i == 0 || i == 2){
+                if(board.getPiece(endPosition) != null){
+                    if(board.getPiece(endPosition).pieceColor != this.pieceColor){
+                        moves.add(new ChessMove(myPosition, endPosition, null));
+                    }
+                }
+            }
+            else {
+                if(board.getPiece(endPosition) == null){
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                    if(atStart){
+                        ChessPosition start = new ChessPosition(possibleCoordinates[i + 2][0], possibleCoordinates[i + 2][1]);
+                        moves.add(new ChessMove(myPosition, start, null));
+                    }
+
+                } else if(board.getPiece(endPosition).pieceColor != this.pieceColor){
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                }
+            }
+        }
+
+
+
 
     }
 
