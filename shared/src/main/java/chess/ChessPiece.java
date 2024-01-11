@@ -335,11 +335,11 @@ public class ChessPiece {
                     }
                     if(atStart){
                         ChessPosition start = new ChessPosition(possibleCoordinates[i + 2][0], possibleCoordinates[i + 2][1]);
-                        moves.add(new ChessMove(myPosition, start, null));
+                        if(board.getPiece(start) == null){
+                            moves.add(new ChessMove(myPosition, start, null));
+                        }
                     }
 
-                } else if(board.getPiece(endPosition).pieceColor != this.pieceColor){
-                    moves.add(new ChessMove(myPosition, endPosition, null));
                 }
             }
         }
