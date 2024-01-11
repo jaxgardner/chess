@@ -31,12 +31,12 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return Arrays.equals(board, that.board);
+        return Arrays.deepEquals(board, that.board);
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(board);
+        return Arrays.deepHashCode(board);
     }
 
     @Override
