@@ -67,6 +67,10 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
 
+    private boolean isValidCoordinates(int row, int column){
+        return row <= 8 && row >= 1 && column <=8 && column >=1;
+    }
+
     private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
         HashSet<ChessMove> moves = new HashSet<>();
         int myCurrentRow = myPosition.getRow();
@@ -188,11 +192,6 @@ public class ChessPiece {
         }
 
         return moves;
-    }
-
-
-    private boolean isValidCoordinates(int row, int column){
-        return row <= 8 && row >= 1 && column <=8 && column >=1;
     }
 
     private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition){
