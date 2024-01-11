@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Collection;
 import java.util.Objects;
@@ -162,7 +161,55 @@ public class ChessPiece {
         return moves;
     }
 
+    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition){
+        HashSet<ChessMove> moves = new HashSet<>();
+
+
+
+        return moves;
+    }
+
+
+    private boolean isValidCoordinates(int row, int column){
+        return row <= 8 && row >= 1 && column <=8 && column >=1;
+    }
+
+    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition){
+        HashSet<ChessMove> moves = new HashSet<>();
+
+
+        int[][] possibleCoordinates = {
+                {myPosition.getRow() + 2, myPosition.getColumn() + 1},
+                {myPosition.getRow() + 2, myPosition.getColumn() - 1},
+                {myPosition.getRow() - 2, myPosition.getColumn() + 1},
+                {myPosition.getRow() - 2, myPosition.getColumn() - 1},
+                {myPosition.getRow() + 1, myPosition.getColumn() + 2},
+                {myPosition.getRow() + 1, myPosition.getColumn() - 2},
+                {myPosition.getRow() - 1, myPosition.getColumn() + 2},
+                {myPosition.getRow() - 1, myPosition.getColumn() - 2}
+        };
+
+        for(int i = 0; i < 8; i++){
+            int[] current = possibleCoordinates[i];
+            if(isValidCoordinates(current[0], current[1])){
+                ChessPosition endLocation = new ChessPosition(current[0], current[1]);
+                if(board.getPiece(endLocation) == null){
+                    moves.add(new ChessMove(myPosition, endLocation, null));
+                }
+            }
+        }
+
+        return moves;
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return bishopMoves(board, myPosition);
+        if(this.type == PieceType.BISHOP){
+            return bishopMoves(board, myPosition);
+        } else if (this.type == PieceType.KING) {
+            return kingMoves(board, myPosition);
+        } else if (this.type == PieceType.KNIGHT) {
+            return knightMoves(board, myPosition);
+        }
+        return null;
     }
 }
