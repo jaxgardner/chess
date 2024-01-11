@@ -223,6 +223,87 @@ public class ChessPiece {
         return moves;
     }
 
+    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition){
+        HashSet<ChessMove> moves = new HashSet<>();
+
+        int row = myPosition.getRow();
+        int column = myPosition.getColumn();
+
+        while(row < 8){
+            row++;
+            if(isValidCoordinates(row, column)){
+                ChessPosition endPosition = new ChessPosition(row, column);
+
+                if(board.getPiece(endPosition) == null){
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                } else{
+                    if(board.getPiece(endPosition).pieceColor != this.pieceColor){
+                        moves.add(new ChessMove(myPosition, endPosition, null));
+                    }
+                    break;
+                }
+
+            }
+        }
+
+        row = myPosition.getRow();
+        column = myPosition.getColumn();
+
+        while(row > 1) {
+            row--;
+            if(isValidCoordinates(row, column)){
+                ChessPosition endPosition = new ChessPosition(row, column);
+                if(board.getPiece(endPosition) == null){
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                } else{
+                    if(board.getPiece(endPosition).pieceColor != this.pieceColor){
+                        moves.add(new ChessMove(myPosition, endPosition, null));
+                    }
+                    break;
+                }
+            }
+        }
+
+        row = myPosition.getRow();
+        column = myPosition.getColumn();
+
+        while(column < 8) {
+            column++;
+            if(isValidCoordinates(row, column)){
+                ChessPosition endPosition = new ChessPosition(row, column);
+                if(board.getPiece(endPosition) == null){
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                } else{
+                    if(board.getPiece(endPosition).pieceColor != this.pieceColor){
+                        moves.add(new ChessMove(myPosition, endPosition, null));
+                    }
+                    break;
+                }
+            }
+        }
+
+        row = myPosition.getRow();
+        column = myPosition.getColumn();
+
+        while(column > 1) {
+            column--;
+            if(isValidCoordinates(row, column)){
+                ChessPosition endPosition = new ChessPosition(row, column);
+                if(board.getPiece(endPosition) == null){
+                    moves.add(new ChessMove(myPosition, endPosition, null));
+                } else{
+                    if(board.getPiece(endPosition).pieceColor != this.pieceColor){
+                        moves.add(new ChessMove(myPosition, endPosition, null));
+                    }
+                    break;
+                }
+            }
+        }
+
+
+        return moves;
+    }
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         if(this.type == PieceType.BISHOP){
             return bishopMoves(board, myPosition);
@@ -230,6 +311,8 @@ public class ChessPiece {
             return kingMoves(board, myPosition);
         } else if (this.type == PieceType.KNIGHT) {
             return knightMoves(board, myPosition);
+        } else if(this.type == PieceType.ROOK){
+            return rookMoves(board, myPosition);
         }
         return null;
     }
