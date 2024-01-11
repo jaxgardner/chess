@@ -71,8 +71,7 @@ public class ChessPiece {
         return row <= 8 && row >= 1 && column <=8 && column >=1;
     }
 
-    private Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition){
-        HashSet<ChessMove> moves = new HashSet<>();
+    private void bishopMoves(ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
         int myCurrentRow = myPosition.getRow();
         int myCurrentColumn = myPosition.getColumn();
         //Check forward-right diagonal
@@ -119,11 +118,9 @@ public class ChessPiece {
             }
 
         }
-        return moves;
     }
 
-    private Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition){
-        HashSet<ChessMove> moves = new HashSet<>();
+    private void kingMoves(ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
 
         int[][] possibleCoordinates = {
                 {myPosition.getRow() + 1, myPosition.getColumn()},
@@ -147,13 +144,9 @@ public class ChessPiece {
                 }
             }
         }
-
-        return moves;
     }
 
-    private Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition){
-        HashSet<ChessMove> moves = new HashSet<>();
-
+    private void knightMoves(ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
         int[][] possibleCoordinates = {
                 {myPosition.getRow() + 2, myPosition.getColumn() + 1},
                 {myPosition.getRow() + 2, myPosition.getColumn() - 1},
@@ -176,8 +169,6 @@ public class ChessPiece {
                 }
             }
         }
-
-        return moves;
     }
 
     private boolean validateMoves(int row, int column, ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
@@ -197,9 +188,7 @@ public class ChessPiece {
         return false;
     }
 
-
-    private Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition){
-        HashSet<ChessMove> moves = new HashSet<>();
+    private void rookMoves(ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
 
         int row = myPosition.getRow();
         int column = myPosition.getColumn();
@@ -242,19 +231,26 @@ public class ChessPiece {
         }
 
 
-        return moves;
+    }
+
+    private void queenMoves(ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
+        bishopMoves(board, myPosition, moves);
+        rookMoves(board, myPosition, moves);
     }
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        HashSet<ChessMove> moves = new HashSet<>();
         if(this.type == PieceType.BISHOP){
-            return bishopMoves(board, myPosition);
+            bishopMoves(board, myPosition, moves);
         } else if (this.type == PieceType.KING) {
-            return kingMoves(board, myPosition);
+            kingMoves(board, myPosition, moves);
         } else if (this.type == PieceType.KNIGHT) {
-            return knightMoves(board, myPosition);
+            knightMoves(board, myPosition, moves);
         } else if(this.type == PieceType.ROOK){
-            return rookMoves(board, myPosition);
+            rookMoves(board, myPosition, moves);
+        } else if(this.type == PieceType.QUEEN){
+            queenMoves(board, myPosition, moves);
         }
-        return null;
+        return moves;
     }
 }
