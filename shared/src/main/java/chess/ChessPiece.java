@@ -263,6 +263,12 @@ public class ChessPiece {
         rookMoves(board, myPosition, moves);
     }
 
+    private void addPromotion(ChessPosition start, ChessPosition end, HashSet<ChessMove> moves){
+        moves.add(new ChessMove(start, end, PieceType.QUEEN));
+        moves.add(new ChessMove(start, end, PieceType.BISHOP));
+        moves.add(new ChessMove(start, end, PieceType.ROOK));
+        moves.add(new ChessMove(start, end, PieceType.KNIGHT));
+    }
     private void pawnMoves(ChessBoard board, ChessPosition myPosition, HashSet<ChessMove> moves){
         int[][] possibleCoordinates = new int[4][2];
         int row = myPosition.getRow();
@@ -312,13 +318,21 @@ public class ChessPiece {
             if(i == 0 || i == 2){
                 if(board.getPiece(endPosition) != null){
                     if(board.getPiece(endPosition).pieceColor != this.pieceColor){
-                        moves.add(new ChessMove(myPosition, endPosition, null));
+                        if(endPosition.getRow() == 8 || endPosition.getRow() == 1) {
+                            addPromotion(myPosition, endPosition, moves);
+                        } else {
+                            moves.add(new ChessMove(myPosition, endPosition, null));
+                        }
                     }
                 }
             }
             else {
                 if(board.getPiece(endPosition) == null){
-                    moves.add(new ChessMove(myPosition, endPosition, null));
+                    if(endPosition.getRow() == 8 || endPosition.getRow() == 1) {
+                        addPromotion(myPosition, endPosition, moves);
+                    } else {
+                        moves.add(new ChessMove(myPosition, endPosition, null));
+                    }
                     if(atStart){
                         ChessPosition start = new ChessPosition(possibleCoordinates[i + 2][0], possibleCoordinates[i + 2][1]);
                         moves.add(new ChessMove(myPosition, start, null));
