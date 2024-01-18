@@ -23,23 +23,23 @@ public class ChessPiece {
     @Override
     public String toString(){
         String piece;
-        if(this.type == PieceType.ROOK){
+        if(type == PieceType.ROOK){
             piece = "r";
-        } else if(this.type == PieceType.KNIGHT){
+        } else if(type == PieceType.KNIGHT){
             piece = "n";
-        } else if(this.type == PieceType.BISHOP){
+        } else if(type == PieceType.BISHOP){
             piece = "b";
-        } else if(this.type == PieceType.QUEEN){
+        } else if(type == PieceType.QUEEN){
             piece = "q";
-        } else if(this.type == PieceType.KING){
+        } else if(type == PieceType.KING){
             piece = "k";
-        } else if(this.type == PieceType.PAWN){
+        } else if(type == PieceType.PAWN){
             piece = "p";
         } else {
             piece = "";
         }
 
-        if(this.pieceColor == ChessGame.TeamColor.WHITE){
+        if(pieceColor == ChessGame.TeamColor.WHITE){
             return piece.toUpperCase();
         }
 
