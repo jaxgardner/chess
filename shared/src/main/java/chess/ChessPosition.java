@@ -9,7 +9,6 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
-
     private int row;
     private int col;
 
@@ -35,6 +34,7 @@ public class ChessPosition {
     public String toString() {
         return "[" + row + ", " + col + "]";
     }
+
 
     /**
      * @return which row this position is in
