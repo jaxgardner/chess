@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -12,10 +13,14 @@ public class ChessGame {
 
     private ChessBoard gameBoard;
     private TeamColor currentTurn;
+    private ChessPosition kingBlackPosition;
+    private ChessPosition kingWhitePosition;
 
     public ChessGame() {
         gameBoard = new ChessBoard();
-        currentTurn = TeamColor.WHITE;
+        currentTurn = TeamColor.BLACK;
+        kingBlackPosition = new ChessPosition(8, 5);
+        kingWhitePosition = new ChessPosition(1, 5);
     }
 
     /**
@@ -42,6 +47,79 @@ public class ChessGame {
         BLACK
     }
 
+    public void movePiece(ChessBoard board, ChessMove move) {
+        ChessPiece movePiece = board.getPiece(move.getStartPosition());
+        board.addPiece(move.getEndPosition(), movePiece);
+        board.addPiece(move.getStartPosition(), null);
+    }
+
+    public void findKing(ChessBoard board) {
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+                ChessPosition kingLooker = new ChessPosition(i, j);
+                if(board.getPiece(kingLooker) != null) {
+                    ChessPiece maybeKing = board.getPiece(kingLooker);
+                    if(maybeKing.getPieceType() == ChessPiece.PieceType.KING && maybeKing.getTeamColor() == TeamColor.WHITE) {
+                        kingWhitePosition = new ChessPosition(kingLooker);
+                    } else if(maybeKing.getPieceType() == ChessPiece.PieceType.KING && maybeKing.getTeamColor() == TeamColor.BLACK) {
+                        kingBlackPosition = new ChessPosition(kingLooker);
+                    }
+                }
+            }
+        }
+    }
+
+    public void findKing() {
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+                ChessPosition kingLooker = new ChessPosition(1, 1);
+                if(gameBoard.getPiece(kingLooker) != null) {
+                    ChessPiece maybeKing = gameBoard.getPiece(kingLooker);
+                    if(maybeKing.getPieceType() == ChessPiece.PieceType.KING && maybeKing.getTeamColor() == TeamColor.WHITE) {
+                        kingWhitePosition = new ChessPosition(kingLooker);
+                    } else if(maybeKing.getPieceType() == ChessPiece.PieceType.KING && maybeKing.getTeamColor() == TeamColor.BLACK) {
+                        kingBlackPosition = new ChessPosition(kingLooker);
+                    }
+                }
+            }
+        }
+    }
+
+    public HashSet<ChessPosition> getOpponentMoves(ChessBoard board) {
+        HashSet<ChessPosition> enemyPositions = new HashSet<>();
+        for(int i = 1; i <= 8; i++) {
+            for(int j = 1; j <= 8; j++) {
+                ChessPosition tempEnd = new ChessPosition(i, j);
+                if(board.getPiece(tempEnd) != null && board.getPiece(tempEnd).getTeamColor() != currentTurn) {
+                    HashSet<ChessMove> enemyMoves = new HashSet<>(board.getPiece(tempEnd).pieceMoves(board, tempEnd));
+                    for(ChessMove move : enemyMoves) {
+                        ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
+                        enemyPositions.add(endPosition);
+                    }
+                }
+            }
+        }
+
+        return enemyPositions;
+    }
+
+    public boolean simulateMove(ChessMove move) {
+        ChessBoard tempBoard = new ChessBoard(gameBoard);
+        movePiece(tempBoard, move);
+        HashSet<ChessPosition> enemyMoves = getOpponentMoves(tempBoard);
+        
+        findKing(tempBoard);
+        
+        if(currentTurn == TeamColor.WHITE && enemyMoves.contains(kingWhitePosition)) {
+            return false;
+        }
+        else if(currentTurn == TeamColor.BLACK && enemyMoves.contains(kingBlackPosition)){
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -50,7 +128,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> validatedMoves = (HashSet<ChessMove>) gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+
+        // Convert into isInCheck function
+        validatedMoves.removeIf(m -> !simulateMove(m));
+        return validatedMoves;
     }
 
     /**
@@ -60,7 +142,13 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> validMovesList = (HashSet<ChessMove>) validMoves(move.getStartPosition());
+        if(validMovesList.contains(move)) {
+            movePiece(gameBoard, move);
+        }
+        else {
+            throw new InvalidMoveException("Move is not valid");
+        }
     }
 
     /**

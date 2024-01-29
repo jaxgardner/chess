@@ -17,6 +17,22 @@ public class ChessBoard {
         board = new ChessPiece[8][8];
     }
 
+    public ChessBoard(ChessBoard otherBoard) {
+        this.board = new ChessPiece[8][8];
+
+        for (int i = 0; i < otherBoard.board.length; i++) {
+            for (int j = 0; j < otherBoard.board[i].length; j++) {
+                ChessPosition tempP = new ChessPosition(i + 1, j + 1);
+                if(otherBoard.getPiece(tempP) != null) {
+                    this.board[i][j] = new ChessPiece(otherBoard.board[i][j]);
+                }
+                else{
+                    this.board[i][j] = null;
+                }
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -36,7 +52,7 @@ public class ChessBoard {
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++){
                 if(board[i][j] == null){
-                    boardString += " ";
+                    boardString += "- ";
                 }
                 else {
                     boardString += (board[i][j].toString() + " ");
@@ -108,6 +124,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+        board = new ChessPiece[8][8];
         setPieces(ChessGame.TeamColor.BLACK);
         setPieces(ChessGame.TeamColor.WHITE);
     }

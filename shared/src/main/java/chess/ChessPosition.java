@@ -17,6 +17,12 @@ public class ChessPosition {
         this.col = col;
     }
 
+    // Copy constructor
+    public ChessPosition(ChessPosition other) {
+        this.row = other.row;
+        this.col = other.col;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
