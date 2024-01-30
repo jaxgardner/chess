@@ -85,12 +85,12 @@ public class ChessGame {
         }
     }
 
-    public HashSet<ChessPosition> getOpponentMoves(ChessBoard board) {
+    public HashSet<ChessPosition> getOpponentMoves(ChessBoard board, ChessGame.TeamColor color) {
         HashSet<ChessPosition> enemyPositions = new HashSet<>();
         for(int i = 1; i <= 8; i++) {
             for(int j = 1; j <= 8; j++) {
                 ChessPosition tempEnd = new ChessPosition(i, j);
-                if(board.getPiece(tempEnd) != null && board.getPiece(tempEnd).getTeamColor() != currentTurn) {
+                if(board.getPiece(tempEnd) != null && board.getPiece(tempEnd).getTeamColor() != color) {
                     HashSet<ChessMove> enemyMoves = new HashSet<>(board.getPiece(tempEnd).pieceMoves(board, tempEnd));
                     for(ChessMove move : enemyMoves) {
                         ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
@@ -104,20 +104,17 @@ public class ChessGame {
     }
 
     public boolean simulateMove(ChessMove move) {
+        ChessGame.TeamColor color = gameBoard.getPiece(move.getStartPosition()).getTeamColor();
         ChessBoard tempBoard = new ChessBoard(gameBoard);
         movePiece(tempBoard, move);
-        HashSet<ChessPosition> enemyMoves = getOpponentMoves(tempBoard);
-        
-        findKing(tempBoard);
-        
-        if(currentTurn == TeamColor.WHITE && enemyMoves.contains(kingWhitePosition)) {
-            return false;
-        }
-        else if(currentTurn == TeamColor.BLACK && enemyMoves.contains(kingBlackPosition)){
-            return false;
-        }
+        HashSet<ChessPosition> enemyMoves = getOpponentMoves(tempBoard, color);
 
-        return true;
+        findKing(tempBoard);
+
+        if(color == TeamColor.WHITE && enemyMoves.contains(kingWhitePosition)) {
+            return false;
+        }
+        else return color != TeamColor.BLACK || !enemyMoves.contains(kingBlackPosition);
     }
 
     /**
@@ -142,6 +139,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if(gameBoard.getPiece(move.getStartPosition()).getTeamColor() != currentTurn) {
+            throw new InvalidMoveException("Not your turn");
+        }
         HashSet<ChessMove> validMovesList = (HashSet<ChessMove>) validMoves(move.getStartPosition());
         if(validMovesList.contains(move)) {
             movePiece(gameBoard, move);
@@ -158,8 +158,21 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessGame.TeamColor oppositeTeam = teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
+        HashSet<ChessPosition> enemyMoves = getOpponentMoves(gameBoard, teamColor);
+
+        return containsOpponentKing(enemyMoves, oppositeTeam, gameBoard);
     }
+
+    private boolean containsOpponentKing(HashSet<ChessPosition> opponentMoves, ChessGame.TeamColor color, ChessBoard board) {
+        findKing(board);
+
+        if(color == TeamColor.BLACK && opponentMoves.contains(kingWhitePosition)) {
+            return true;
+        }
+        else return color == TeamColor.WHITE && opponentMoves.contains(kingBlackPosition);
+    }
+
 
     /**
      * Determines if the given team is in checkmate
