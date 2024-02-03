@@ -69,22 +69,6 @@ public class ChessGame {
         }
     }
 
-    public void findKing() {
-        for(int i = 1; i <= 8; i++) {
-            for(int j = 1; j <= 8; j++) {
-                ChessPosition kingLooker = new ChessPosition(1, 1);
-                if(gameBoard.getPiece(kingLooker) != null) {
-                    ChessPiece maybeKing = gameBoard.getPiece(kingLooker);
-                    if(maybeKing.getPieceType() == ChessPiece.PieceType.KING && maybeKing.getTeamColor() == TeamColor.WHITE) {
-                        kingWhitePosition = new ChessPosition(kingLooker);
-                    } else if(maybeKing.getPieceType() == ChessPiece.PieceType.KING && maybeKing.getTeamColor() == TeamColor.BLACK) {
-                        kingBlackPosition = new ChessPosition(kingLooker);
-                    }
-                }
-            }
-        }
-    }
-
     public HashSet<ChessPosition> getOpponentMoves(ChessBoard board, ChessGame.TeamColor color) {
         HashSet<ChessPosition> enemyPositions = new HashSet<>();
 
