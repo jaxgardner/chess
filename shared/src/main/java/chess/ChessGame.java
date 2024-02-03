@@ -19,8 +19,8 @@ public class ChessGame {
     public ChessGame() {
         gameBoard = new ChessBoard();
         currentTurn = TeamColor.BLACK;
-        kingBlackPosition = new ChessPosition(8, 5);
-        kingWhitePosition = new ChessPosition(1, 5);
+//        kingBlackPosition = new ChessPosition(8, 5);
+//        kingWhitePosition = new ChessPosition(1, 5);
     }
 
     /**
@@ -155,7 +155,6 @@ public class ChessGame {
         if(validMovesList.contains(move)) {
             movePiece(gameBoard, move);
             currentTurn = currentTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
-            checkPromotion(move);
         }
         else {
             throw new InvalidMoveException("Move is not valid");
