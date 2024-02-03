@@ -106,15 +106,18 @@ public class ChessGame {
     public boolean simulateMove(ChessMove move) {
         ChessGame.TeamColor color = gameBoard.getPiece(move.getStartPosition()).getTeamColor();
         ChessBoard tempBoard = new ChessBoard(gameBoard);
+
         movePiece(tempBoard, move);
+
         HashSet<ChessPosition> enemyMoves = getOpponentMoves(tempBoard, color);
 
         findKing(tempBoard);
 
-        if(color == TeamColor.WHITE && enemyMoves.contains(kingWhitePosition)) {
-            return false;
+        if (color == TeamColor.WHITE) {
+            return !enemyMoves.contains(kingWhitePosition);
+        } else {
+            return !enemyMoves.contains(kingBlackPosition);
         }
-        else return color != TeamColor.BLACK || !enemyMoves.contains(kingBlackPosition);
     }
 
     private void checkPromotion(ChessMove move) {
@@ -134,11 +137,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        HashSet<ChessMove> validatedMoves = (HashSet<ChessMove>) gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+        HashSet<ChessMove> possibleMoves = (HashSet<ChessMove>) gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
 
-        // Convert into isInCheck function
-        validatedMoves.removeIf(m -> !simulateMove(m));
-        return validatedMoves;
+        possibleMoves.removeIf(m -> !simulateMove(m));
+        return possibleMoves;
     }
 
     /**
