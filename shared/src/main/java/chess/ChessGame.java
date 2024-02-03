@@ -103,13 +103,13 @@ public class ChessGame {
     }
 
     private HashSet<ChessPosition> extractPiecePositions(ChessBoard board, ChessPiece piece, ChessPosition start) {
-        HashSet<ChessPosition> moves = new HashSet<>();
+        HashSet<ChessPosition> positions = new HashSet<>();
 
         for (ChessMove move : piece.pieceMoves(board, start)) {
-            moves.add(move.getEndPosition());
+            positions.add(move.getEndPosition());
         }
 
-        return moves;
+        return positions;
     }
 
 
