@@ -117,6 +117,15 @@ public class ChessGame {
         else return color != TeamColor.BLACK || !enemyMoves.contains(kingBlackPosition);
     }
 
+    private void checkPromotion(ChessMove move) {
+        ChessPiece.PieceType promotionPieceType = (move.getPromotionPiece() != null) ? move.getPromotionPiece() : null;
+        if(promotionPieceType != null) {
+            ChessPiece promotionPiece = new ChessPiece(currentTurn, move.getPromotionPiece());
+            gameBoard.addPiece(move.getEndPosition(), promotionPiece);
+        }
+    }
+
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -146,6 +155,7 @@ public class ChessGame {
         if(validMovesList.contains(move)) {
             movePiece(gameBoard, move);
             currentTurn = currentTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
+            checkPromotion(move);
         }
         else {
             throw new InvalidMoveException("Move is not valid");
