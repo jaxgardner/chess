@@ -87,21 +87,31 @@ public class ChessGame {
 
     public HashSet<ChessPosition> getOpponentMoves(ChessBoard board, ChessGame.TeamColor color) {
         HashSet<ChessPosition> enemyPositions = new HashSet<>();
-        for(int i = 1; i <= 8; i++) {
-            for(int j = 1; j <= 8; j++) {
+
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
                 ChessPosition tempEnd = new ChessPosition(i, j);
-                if(board.getPiece(tempEnd) != null && board.getPiece(tempEnd).getTeamColor() != color) {
-                    HashSet<ChessMove> enemyMoves = new HashSet<>(board.getPiece(tempEnd).pieceMoves(board, tempEnd));
-                    for(ChessMove move : enemyMoves) {
-                        ChessPosition endPosition = new ChessPosition(move.getEndPosition().getRow(), move.getEndPosition().getColumn());
-                        enemyPositions.add(endPosition);
-                    }
+                ChessPiece piece = board.getPiece(tempEnd);
+
+                if (piece != null && piece.getTeamColor() != color) {
+                    enemyPositions.addAll(extractPiecePositions(board, piece, tempEnd));
                 }
             }
         }
 
         return enemyPositions;
     }
+
+    private HashSet<ChessPosition> extractPiecePositions(ChessBoard board, ChessPiece piece, ChessPosition start) {
+        HashSet<ChessPosition> moves = new HashSet<>();
+
+        for (ChessMove move : piece.pieceMoves(board, start)) {
+            moves.add(move.getEndPosition());
+        }
+
+        return moves;
+    }
+
 
     public boolean simulateMove(ChessMove move) {
         ChessGame.TeamColor color = gameBoard.getPiece(move.getStartPosition()).getTeamColor();
