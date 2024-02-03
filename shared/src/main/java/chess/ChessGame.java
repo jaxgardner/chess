@@ -154,6 +154,7 @@ public class ChessGame {
         HashSet<ChessMove> validMovesList = (HashSet<ChessMove>) validMoves(move.getStartPosition());
         if(validMovesList.contains(move)) {
             movePiece(gameBoard, move);
+            checkPromotion(move);
             currentTurn = currentTurn == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE;
         }
         else {
