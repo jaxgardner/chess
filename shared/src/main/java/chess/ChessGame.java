@@ -19,8 +19,6 @@ public class ChessGame {
     public ChessGame() {
         gameBoard = new ChessBoard();
         currentTurn = TeamColor.BLACK;
-//        kingBlackPosition = new ChessPosition(8, 5);
-//        kingWhitePosition = new ChessPosition(1, 5);
     }
 
     /**
