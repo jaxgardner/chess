@@ -1,9 +1,11 @@
 package dataAccess;
 
-public interface AuthDAO {
-    public void createAuth();
+import model.AuthData;
 
-    public void getAuth();
+public interface AuthDAO {
+    public AuthData createAuth();
+
+    public AuthData getAuth();
 
     public void deleteAuth();
 

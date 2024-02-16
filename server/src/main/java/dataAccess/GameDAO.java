@@ -1,11 +1,13 @@
 package dataAccess;
 
+import model.GameData;
+
 public interface GameDAO {
-    public void createGame();
+    public GameData createGame();
 
-    public void getGame();
+    public GameData getGame();
 
-    public void listGames();
+    public GameData listGames();
 
     public void updateGame();
 

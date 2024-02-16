@@ -1,9 +1,11 @@
 package dataAccess;
 
-public interface UserDAO {
-    public void createUser();
+import model.UserData;
 
-    public void getUser();
+public interface UserDAO {
+    public UserData createUser();
+
+    public UserData getUser();
 
 
 }
