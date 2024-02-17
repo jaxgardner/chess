@@ -16,34 +16,47 @@ public class MemAuthDao implements AuthDAO {
 
     public AuthData createAuth(String authToken, String username) throws DataAccessException {
         AuthData newAuthData;
+        newAuthData = new AuthData(authToken, username);
+
         try {
-            newAuthData = new AuthData(authToken, username);
             authData.put(authToken, newAuthData);
         } catch(Exception e) {
-            throw new CannotConnectToServerException("Cannot connect to server");
+            throw new DataAccessException("Cannot connect to server");
         }
 
         return newAuthData;
     }
 
-    public boolean getAuth(String authToken) {
-        return authData.containsKey(authToken);
-    }
+    public boolean getAuth(String authToken) throws DataAccessException {
+        boolean containsAuthData;
 
-    public void deleteAuth(String authToken) throws DataAccessException {
-        AuthData delete = authData.remove(authToken);
-
-        if(delete == null) {
-            throw new DataDoesNotExistException("Not authorized");
+        try {
+            containsAuthData = authData.containsKey(authToken);
+        } catch (Exception e) {
+            throw new DataAccessException("Cannot connect to server");
         }
 
+        return containsAuthData;
     }
 
-    public void clear() {
-        authData.clear();
+    public AuthData deleteAuth(String authToken) throws DataAccessException {
+        AuthData deletedData;
+
+        try {
+             deletedData = authData.remove(authToken);
+        } catch (Exception e) {
+            throw  new DataAccessException("Cannot connect to server");
+        }
+
+        return deletedData;
+
     }
 
-
-
-
+    public void clear() throws DataAccessException {
+        try {
+            authData.clear();
+        } catch (Exception e) {
+            throw  new DataAccessException("Cannot connect to server");
+        }
+    }
 }
