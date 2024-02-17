@@ -6,6 +6,7 @@ import dataAccess.GameDAO;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class MemGameDao implements GameDAO {
     public void addGame(String gameName, int gameID) throws DataAccessException {
         GameData newGameData = new GameData(gameID, "", "", gameName, new ChessGame());
         try {
-            gameDataStorage.put((Integer) gameID, newGameData);
+            gameDataStorage.put(gameID, newGameData);
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
@@ -29,23 +30,21 @@ public class MemGameDao implements GameDAO {
         GameData gameData;
 
         try {
-            gameData = gameDataStorage.get((Integer) gameID);
+            gameData = gameDataStorage.get(gameID);
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
         return gameData;
     }
 
-    public ArrayList<GameData> listGames() throws DataAccessException {
-        ArrayList<GameData> games = new ArrayList<>();
+    public Collection<GameData> listGames() throws DataAccessException {
+        Collection<GameData> games;
         try {
-            for(Map.Entry<Integer, GameData> entry: gameDataStorage.entrySet()) {
-                GameData game = entry.getValue();
-                games.add(game);
-            }
+            games = gameDataStorage.values();
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
+
         return games;
     }
 
@@ -56,7 +55,7 @@ public class MemGameDao implements GameDAO {
             if(game != null) {
                 updatedGame = new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game());
             }
-            gameDataStorage.put((Integer) gameID, updatedGame);
+            gameDataStorage.put(gameID, updatedGame);
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
@@ -69,7 +68,7 @@ public class MemGameDao implements GameDAO {
             if(game != null) {
                 updatedGame = new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game());
             }
-            gameDataStorage.put((Integer) gameID, updatedGame);
+            gameDataStorage.put(gameID, updatedGame);
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
