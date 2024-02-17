@@ -1,9 +1,7 @@
 package dataAccess.Memory;
 
 import dataAccess.AuthDAO;
-import dataAccess.Exceptions.CannotConnectToServerException;
 import dataAccess.Exceptions.DataAccessException;
-import dataAccess.Exceptions.DataDoesNotExistException;
 import model.AuthData;
 
 import java.util.HashMap;

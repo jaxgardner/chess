@@ -1,10 +1,10 @@
 package dataAccess.Memory;
 
 import dataAccess.Exceptions.DataAccessException;
-import dataAccess.Exceptions.DataDoesNotExistException;
 import dataAccess.UserDAO;
 import model.UserData;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 
 public class MemUserDao implements UserDAO {
@@ -15,25 +15,38 @@ public class MemUserDao implements UserDAO {
         userData = new HashMap<>();
     }
 
-    public UserData createUser(String username, String password, String email){
-        UserData user = new UserData(username, password, email);
-        userData.put(username, user);
-
-        return user;
-    }
-
-    public UserData getUser(String username) throws DataAccessException {
-        UserData user= userData.get(username);
-
-        if(user == null) {
-            throw new DataDoesNotExistException("User not found");
+    // Change to more specific exception when connecting to database
+    public UserData createUser(String username, String password, String email) throws DataAccessException {
+        UserData user;
+        try{
+            user = new UserData(username, password, email);
+            userData.put(username, user);
+        } catch(Exception e) {
+            throw new DataAccessException("Can't connect to database");
         }
 
         return user;
     }
 
-    public void clear() {
-        userData.clear();
+    // Change to more specific exception when connecting to database
+    public UserData getUser(String username) throws DataAccessException {
+        UserData user;
+
+        try {
+            user= userData.get(username);
+        } catch(Exception e) {
+            throw new DataAccessException("Cannot connect to server");
+        }
+
+        return user;
+    }
+
+    public void clear() throws DataAccessException {
+        try {
+            userData.clear();
+        } catch( Exception e) {
+            throw new DataAccessException("Cannot connect to server");
+        }
     }
 
 }
