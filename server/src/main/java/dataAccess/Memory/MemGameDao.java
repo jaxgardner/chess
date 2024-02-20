@@ -14,10 +14,9 @@ public class MemGameDao implements GameDAO {
     HashMap<Integer, GameData> gameDataStorage = new HashMap<>();
 
 
-    public void addGame(String gameName, int gameID) throws DataAccessException {
-        GameData newGameData = new GameData(gameID, "", "", gameName, new ChessGame());
+    public void addGame(GameData newGame) throws DataAccessException {
         try {
-            gameDataStorage.put(gameID, newGameData);
+            gameDataStorage.put(newGame.gameID(), newGame);
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
