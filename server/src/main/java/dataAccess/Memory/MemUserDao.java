@@ -9,18 +9,15 @@ import java.util.HashMap;
 
 public class MemUserDao implements UserDAO {
 
-    private final HashMap<String, UserData> userData;
+    private final HashMap<String, UserData> userData = new HashMap<>();
 
-    public MemUserDao() {
-        userData = new HashMap<>();
-    }
+
 
     // Change to more specific exception when connecting to database
-    public UserData createUser(String username, String password, String email) throws DataAccessException {
-        UserData user = new UserData(username, password, email);
+    public UserData createUser(UserData user) throws DataAccessException {
 
         try{
-            userData.put(username, user);
+            userData.put(user.username(), user);
         } catch(Exception e) {
             throw new DataAccessException("Can't connect to database");
         }

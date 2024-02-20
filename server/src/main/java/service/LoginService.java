@@ -2,7 +2,6 @@ package service;
 
 import model.AuthData;
 import models.LoginRequest;
-import models.LoginResult;
 
 public class LoginService {
 

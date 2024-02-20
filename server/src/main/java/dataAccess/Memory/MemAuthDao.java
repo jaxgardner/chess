@@ -8,23 +8,18 @@ import java.util.HashMap;
 
 public class MemAuthDao implements AuthDAO {
 
-    private HashMap<String, AuthData> authData;
+    private final HashMap<String, AuthData> authData = new HashMap<>();
 
-    public MemAuthDao() {
-        authData = new HashMap<>();
-    }
 
-    public AuthData createAuth(String authToken, String username) throws DataAccessException {
-        AuthData newAuthData;
-        newAuthData = new AuthData(authToken, username);
+    public AuthData createAuth(AuthData userAuth) throws DataAccessException {
 
         try {
-            authData.put(authToken, newAuthData);
+            authData.put(userAuth.authToken(), userAuth);
         } catch(Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
 
-        return newAuthData;
+        return userAuth;
     }
 
     public boolean getAuth(String authToken) throws DataAccessException {

@@ -11,11 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemGameDao implements GameDAO {
-    HashMap<Integer, GameData> gameDataStorage;
+    HashMap<Integer, GameData> gameDataStorage = new HashMap<>();
 
-    public MemGameDao() {
-        gameDataStorage = new HashMap<>();
-    }
 
     public void addGame(String gameName, int gameID) throws DataAccessException {
         GameData newGameData = new GameData(gameID, "", "", gameName, new ChessGame());
