@@ -22,16 +22,16 @@ public class MemAuthDao implements AuthDAO {
         return userAuth;
     }
 
-    public boolean getAuth(String authToken) throws DataAccessException {
-        boolean containsAuthData;
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        AuthData userAuth;
 
         try {
-            containsAuthData = authData.containsKey(authToken);
+            userAuth = authData.get(authToken);
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
 
-        return containsAuthData;
+        return userAuth;
     }
 
     public AuthData deleteAuth(String authToken) throws DataAccessException {

@@ -34,4 +34,9 @@ public class Service {
         authDAO.createAuth(userAuth);
     }
 
+    protected boolean verifyAuthToken(String authToken) throws Exception {
+        AuthData userAuth = authDAO.getAuth(authToken);
+        return userAuth != null;
+    }
+
 }

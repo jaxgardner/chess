@@ -25,12 +25,10 @@ public class LoginService extends Service {
         return userFromDB != null && Objects.equals(userLogin.password(), userFromDB.password());
     }
 
-    private boolean checkAuthToken(AuthData req) throws Exception {
-        return authDAO.getAuth(req.authToken());
-    }
 
-    private void deleteFromAuthData(AuthData req) throws Exception {
-        authDAO.deleteAuth(req.authToken());
+
+    private void deleteFromAuthData(String authToken) throws Exception {
+        authDAO.deleteAuth(authToken);
     }
 
     public AuthData getLogin(LoginRequest req) throws Exception {
@@ -43,9 +41,9 @@ public class LoginService extends Service {
         return newUserAuth;
     }
 
-    public void getLogout(AuthData req) throws Exception {
-        if(checkAuthToken(req)) {
-            deleteFromAuthData(req);
+    public void getLogout(String authToken) throws Exception {
+        if(super.verifyAuthToken(authToken)) {
+            deleteFromAuthData(authToken);
         }
     }
 
