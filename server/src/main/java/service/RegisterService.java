@@ -6,38 +6,21 @@ import model.AuthData;
 import model.UserData;
 
 import java.util.Objects;
-import java.util.UUID;
 
-public class RegisterService {
+public class RegisterService extends Service {
     private final MemUserDao userDAO;
-    private final MemAuthDao authDAO;
 
     public RegisterService(MemUserDao userDAO, MemAuthDao authDAO) {
+        super(userDAO, authDAO);
         this.userDAO = userDAO;
-        this.authDAO = authDAO;
     }
 
     private boolean verifyPassword(UserData user, String password) {
         return Objects.equals(user.password(), password);
     }
 
-    private UserData getUser(String username) throws Exception {
-        return userDAO.getUser(username);
-    }
-
     private void createNewUser(UserData user) throws Exception {
         userDAO.createUser(user);
-    }
-
-    private AuthData generateAuth(String username) throws Exception {
-        UUID uuid = UUID.randomUUID();
-
-        String uuidString = uuid.toString();
-
-        AuthData newUserAuth = new AuthData(username, uuidString);
-
-        return authDAO.createAuth(newUserAuth);
-
     }
 
     public AuthData registerUser(UserData userData) throws Exception{
@@ -45,7 +28,9 @@ public class RegisterService {
 
         if(userFromDB != null &&  verifyPassword(userFromDB, userData.password())) {
             createNewUser(userData);
-            return generateAuth(userData.username());
+            AuthData newUserAuth = generateAuth(userData.username());
+            addToAuthData(newUserAuth);
+            return newUserAuth;
         }
 
         return null;

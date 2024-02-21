@@ -9,10 +9,10 @@ public class AdminService {
     private final MemGameDao gameAccess;
     private final MemUserDao userAccess;
 
-    public AdminService() {
-        authAccess = new MemAuthDao();
-        gameAccess = new MemGameDao();
-        userAccess = new MemUserDao();
+    public AdminService(MemAuthDao authAccess, MemGameDao gameAccess, MemUserDao userAccess) {
+        this.authAccess = authAccess;
+        this.gameAccess = gameAccess;
+        this.userAccess = userAccess;
     }
 
     public void clear() throws Exception{
