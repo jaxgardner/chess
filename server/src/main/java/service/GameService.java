@@ -5,6 +5,7 @@ import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import model.AuthData;
 import model.GameData;
+import models.JoinGameRequest;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -58,6 +59,12 @@ public class GameService {
         }
 
         return null;
+    }
+
+    public void joinGame(JoinGameRequest req) throws Exception {
+        if(verifyAuth(req.authToken())) {
+               
+        }
     }
 
 
