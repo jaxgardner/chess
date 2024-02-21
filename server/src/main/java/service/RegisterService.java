@@ -12,9 +12,9 @@ public class RegisterService {
     private final MemUserDao userDAO;
     private final MemAuthDao authDAO;
 
-    public RegisterService() {
-        userDAO = new MemUserDao();
-        authDAO = new MemAuthDao();
+    public RegisterService(MemUserDao userDAO, MemAuthDao authDAO) {
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
     }
 
     private boolean verifyPassword(UserData user, String password) {

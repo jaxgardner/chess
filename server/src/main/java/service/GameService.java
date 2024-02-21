@@ -12,14 +12,14 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameService {
-    private MemAuthDao authDAO;
-    private MemGameDao gameDAO;
+    private final MemAuthDao authDAO;
+    private final MemGameDao gameDAO;
 
     private static final AtomicInteger gameCounter = new AtomicInteger(0);
 
-    public GameService() {
-        authDAO = new MemAuthDao();
-        gameDAO = new MemGameDao();
+    public GameService(MemAuthDao authDAO, MemGameDao gameDAO) {
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
     }
 
     private boolean verifyAuth(String authToken) throws Exception {
@@ -63,7 +63,7 @@ public class GameService {
 
     public void joinGame(JoinGameRequest req) throws Exception {
         if(verifyAuth(req.authToken())) {
-               
+
         }
     }
 

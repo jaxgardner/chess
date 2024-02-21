@@ -14,9 +14,9 @@ public class LoginService {
     private final MemUserDao userDAO;
     private final MemAuthDao authDAO;
 
-    public LoginService() {
-        userDAO = new MemUserDao();
-        authDAO = new MemAuthDao();
+    public LoginService(MemUserDao userDao, MemAuthDao authDao) {
+        this.userDAO = userDao;
+        this.authDAO = authDao;
     }
 
     private UserData getUser(String username) throws Exception {
