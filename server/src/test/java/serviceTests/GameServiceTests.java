@@ -36,8 +36,13 @@ public class GameServiceTests {
     public void createAGame() throws Exception {
         Integer gameID = gameService.createGame(userAuth.authToken(), "New Game");
 
-        System.out.println(gameID);
-
         Assertions.assertTrue(gameID > 0);
+    }
+
+    @Test
+    public void createAGameUnauthorized() throws Exception {
+        Integer gameID = gameService.createGame("asdfasdfasdfa", "New Game");
+
+        Assertions.assertNull(gameID);
     }
 }
