@@ -13,16 +13,14 @@ import service.RegisterService;
 
 public class LoginServiceTests {
     private MemUserDao userDAO;
-    private MemAuthDao authDAO;
-    private RegisterService registerService;
     private LoginService loginService;
 
     private AuthData newUserAuth;
     @BeforeEach
     public void setup() throws Exception {
         userDAO = new MemUserDao();
-        authDAO = new MemAuthDao();
-        registerService = new RegisterService(userDAO, authDAO);
+        MemAuthDao authDAO = new MemAuthDao();
+        RegisterService registerService = new RegisterService(userDAO, authDAO);
 
         newUserAuth = registerService.registerUser(new UserData("Jaxrocs", "12345", "jaxrocs@byu.edu"));
         loginService = new LoginService(userDAO, authDAO);

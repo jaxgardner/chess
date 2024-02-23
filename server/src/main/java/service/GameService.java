@@ -4,19 +4,18 @@ import chess.ChessGame;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
-import model.AuthData;
 import model.GameData;
 import models.JoinGameRequest;
 
 import java.util.Collection;
-import java.util.UUID;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameService extends Service{
     private final MemAuthDao authDAO;
     private final MemGameDao gameDAO;
 
-    private static final AtomicInteger gameCounter = new AtomicInteger(0);
+    private AtomicInteger gameCounter = new AtomicInteger(0);
 
     public GameService(MemUserDao userDAO, MemAuthDao authDAO, MemGameDao gameDAO) {
         super(userDAO, authDAO);
@@ -29,8 +28,9 @@ public class GameService extends Service{
     }
 
     private int createGameID() {
-        int MAX_VALUE = 9999;
-        return gameCounter.getAndIncrement() % (MAX_VALUE + 1);
+        Random random = new Random();
+        String id = String.format("%04d", random.nextInt(10000));
+        return  Integer.parseInt(id);
     }
 
     private void addGame(String gameName, int gameID) throws Exception {
