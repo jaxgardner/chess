@@ -5,8 +5,6 @@ import dataAccess.Memory.MemUserDao;
 import model.AuthData;
 import model.UserData;
 
-import java.util.Objects;
-
 public class RegisterService extends Service {
     private final MemUserDao userDAO;
 
@@ -15,21 +13,17 @@ public class RegisterService extends Service {
         this.userDAO = userDAO;
     }
 
-    private boolean verifyPassword(UserData user, String password) {
-        return Objects.equals(user.password(), password);
-    }
-
     private void createNewUser(UserData user) throws Exception {
         userDAO.createUser(user);
     }
 
-    public AuthData registerUser(UserData userData) throws Exception{
+    public AuthData registerUser(UserData userData) throws Exception {
         UserData userFromDB = getUser(userData.username());
 
-        if(userFromDB != null &&  verifyPassword(userFromDB, userData.password())) {
+        if(userFromDB == null) {
             createNewUser(userData);
-            AuthData newUserAuth = generateAuth(userData.username());
-            addToAuthData(newUserAuth);
+            AuthData newUserAuth = super.generateAuth(userData.username());
+            super.addToAuthData(newUserAuth);
             return newUserAuth;
         }
 

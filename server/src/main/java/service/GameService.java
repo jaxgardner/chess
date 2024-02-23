@@ -24,7 +24,6 @@ public class GameService extends Service{
         this.gameDAO = gameDAO;
     }
 
-
     private Collection<GameData> getGames() throws Exception {
         return gameDAO.listGames();
     }
@@ -39,7 +38,6 @@ public class GameService extends Service{
 
         gameDAO.addGame(newGame);
     }
-
 
     public Collection<GameData> retrieveGames(String authToken) throws Exception {
         if(verifyAuthToken(authToken)) {
@@ -62,10 +60,12 @@ public class GameService extends Service{
 
     public void joinGame(JoinGameRequest req) throws Exception {
         if(super.verifyAuthToken(req.authToken())) {
-
+            String username = authDAO.getAuth(req.authToken()).username();
+            if(req.playerColor().equals("BLACK")) {
+                gameDAO.updateGameBlack(req.playerColor(), username, req.gameID());
+            } else {
+                gameDAO.updateGameWhite(req.playerColor(), username, req.gameID());
+            }
         }
     }
-
-
-
 }
