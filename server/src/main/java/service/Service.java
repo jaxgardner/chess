@@ -25,7 +25,7 @@ public class Service {
 
         String uuidString = uuid.toString();
 
-        AuthData newUserAuth = new AuthData(username, uuidString);
+        AuthData newUserAuth = new AuthData(uuidString, username);
 
         return authDAO.createAuth(newUserAuth);
     }

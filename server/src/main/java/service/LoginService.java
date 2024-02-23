@@ -7,7 +7,6 @@ import model.UserData;
 import models.LoginRequest;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class LoginService extends Service {
 
