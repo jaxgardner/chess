@@ -5,12 +5,15 @@ import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.GameService;
+
+import java.util.Collection;
 
 public class GameServiceTests {
     private MemUserDao userDAO;
@@ -45,4 +48,24 @@ public class GameServiceTests {
 
         Assertions.assertNull(gameID);
     }
+
+    @Test
+    public void getGames() throws Exception {
+        gameService.createGame(userAuth.authToken(), "New Game");
+        gameService.createGame(userAuth.authToken(), "New Game1");
+        gameService.createGame(userAuth.authToken(), "New Game2");
+        gameService.createGame(userAuth.authToken(), "New Game3");
+
+        Collection<GameData> games = gameService.retrieveGames(userAuth.authToken());
+
+        Assertions.assertEquals(games.size(), 4);
+    }
+
+    @Test
+    public void getGamesUnauthorized() throws Exception {
+        Collection<GameData> games = gameService.retrieveGames("Fasdfasdfasdf");
+
+        Assertions.assertNull(games);
+    }
+
 }
