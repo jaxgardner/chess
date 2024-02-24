@@ -6,7 +6,7 @@ import dataAccess.Memory.MemUserDao;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
-import models.LoginRequest;
+import model.LoginRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

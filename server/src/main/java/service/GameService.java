@@ -7,8 +7,8 @@ import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
 import exception.ServiceLogicException;
 import model.GameData;
-import models.GameListResult;
-import models.JoinGameRequest;
+import model.GameListResult;
+import model.JoinGameRequest;
 
 import java.util.List;
 import java.util.Random;

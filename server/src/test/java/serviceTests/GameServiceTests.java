@@ -8,15 +8,13 @@ import exception.ServiceLogicException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import models.GameListResult;
-import models.JoinGameRequest;
+import model.GameListResult;
+import model.JoinGameRequest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.GameService;
 
-import java.util.Collection;
 import java.util.List;
 
 public class GameServiceTests {

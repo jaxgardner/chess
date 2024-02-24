@@ -6,7 +6,7 @@ import dataAccess.Memory.MemUserDao;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
-import models.LoginRequest;
+import model.LoginRequest;
 
 import java.util.Objects;
 
