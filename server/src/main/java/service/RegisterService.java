@@ -1,7 +1,9 @@
 package service;
 
+import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemUserDao;
+import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
 
@@ -13,11 +15,15 @@ public class RegisterService extends Service {
         this.userDAO = userDAO;
     }
 
-    private void createNewUser(UserData user) throws Exception {
-        userDAO.createUser(user);
+    private void createNewUser(UserData user) throws ServiceLogicException {
+        try {
+            userDAO.createUser(user);
+        } catch (DataAccessException e) {
+            throw new ServiceLogicException(500, "Cannot access data");
+        }
     }
 
-    public AuthData registerUser(UserData userData) throws Exception {
+    public AuthData registerUser(UserData userData) throws ServiceLogicException {
         UserData userFromDB = getUser(userData.username());
 
         if(userFromDB == null) {
