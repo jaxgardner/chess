@@ -144,6 +144,8 @@ public class ChessPiece {
         bishopMoves(board, moves, start);
         rookMoves(board, moves, start);
     }
+    
+    
     private void knightMoves(ChessBoard board, HashSet<ChessMove> moves, ChessPosition start){
         int row = start.getRow();
         int col = start.getColumn();
@@ -159,6 +161,10 @@ public class ChessPiece {
                 {row + 1, col + 2},
         };
 
+        runMoves(board, moves, start, possibleMoves);
+    }
+
+    private void runMoves(ChessBoard board, HashSet<ChessMove> moves, ChessPosition start, int[][] possibleMoves) {
         for(int i = 0; i < 8; i++) {
             ChessPosition end = new ChessPosition(possibleMoves[i][0], possibleMoves[i][1]);
             if(end.getRow() >= 1 && end.getRow() <= 8 && end.getColumn() <= 8 && end.getColumn() >= 1) {
@@ -182,12 +188,7 @@ public class ChessPiece {
                 {row, col + 1},
         };
 
-        for(int i = 0; i < 8; i++) {
-            ChessPosition end = new ChessPosition(possibleMoves[i][0], possibleMoves[i][1]);
-            if(end.getRow() >= 1 && end.getRow() <= 8 && end.getColumn() <= 8 && end.getColumn() >= 1) {
-                verifyBasicMove(board, moves, start, end);
-            }
-        }
+        runMoves(board, moves, start, possibleMoves);
     }
 
     private void pawnMoves(ChessBoard board, HashSet<ChessMove> moves, ChessPosition start) {
@@ -217,23 +218,13 @@ public class ChessPiece {
 
             if(i == 0 || i == 2) {
                 if(board.getPiece(end) != null && board.getPiece(end).pieceColor != pieceColor) {
-                    if(teamWhite && end.getRow() == 8 || !(teamWhite) && end.getRow() == 1) {
-                        getPromotionPieces(moves, start, end);
-                    }
-                    else {
-                        moves.add(new ChessMove(start, end, null));
-                    }
+                    pawnCheck(moves, start, teamWhite, end);
                 }
             }
 
             else if(i == 1) {
                 if(board.getPiece(end) == null) {
-                    if(teamWhite && end.getRow() == 8 || !(teamWhite) && end.getRow() == 1) {
-                        getPromotionPieces(moves, start, end);
-                    }
-                    else {
-                        moves.add(new ChessMove(start, end, null));
-                    }
+                    pawnCheck(moves, start, teamWhite, end);
                 }
             }
             else {
@@ -250,6 +241,15 @@ public class ChessPiece {
 
         }
 
+    }
+
+    private void pawnCheck(HashSet<ChessMove> moves, ChessPosition start, boolean teamWhite, ChessPosition end) {
+        if(teamWhite && end.getRow() == 8 || !teamWhite && end.getRow() == 1) {
+            getPromotionPieces(moves, start, end);
+        }
+        else {
+            moves.add(new ChessMove(start, end, null));
+        }
     }
 
     /**
