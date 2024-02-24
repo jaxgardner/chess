@@ -49,6 +49,8 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clearAll);
+        Spark.exception(ServiceLogicException.class, this::exceptionHandler);
+
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -57,6 +59,10 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    private void exceptionHandler(ServiceLogicException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
     }
 
     private Object registerNewUser(Request req, Response res) throws ServiceLogicException {
