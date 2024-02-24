@@ -8,7 +8,9 @@ import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
 import models.ErrorResponse;
+import models.LoginRequest;
 import models.RegisterRequest;
+import org.eclipse.jetty.client.HttpRequestException;
 import service.GameService;
 import service.LoginService;
 import service.RegisterService;
@@ -40,6 +42,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         Spark.post("/user", this::registerNewUser);
+        Spark.post("/session", this::loginUser);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -66,5 +69,18 @@ public class Server {
 
         res.status(403);
         return new Gson().toJson(new ErrorResponse("Error: already taken"));
+    }
+
+    private Object loginUser(Request req, Response res) throws ServiceLogicException {
+        var userLogin = new Gson().fromJson(req.body(), LoginRequest.class);
+
+        AuthData userAuth = loginService.getLogin(userLogin);
+        if(userAuth == null) {
+            res.status(401);
+            return new Gson().toJson(new ErrorResponse("Error: unauthorized"));
+        }
+
+        res.status(200);
+        return new Gson().toJson(userAuth);
     }
 }
