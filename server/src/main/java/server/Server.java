@@ -9,6 +9,7 @@ import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
 import models.*;
+import service.AdminService;
 import service.GameService;
 import service.LoginService;
 import service.RegisterService;
@@ -19,20 +20,19 @@ import java.util.List;
 import java.util.Map;
 
 public class Server {
-    private MemUserDao userDAO;
-    private MemAuthDao authDAO;
-    private MemGameDao gameDAO;
-    private GameService gameService;
-    private LoginService loginService;
-    private RegisterService registerService;
+    private final GameService gameService;
+    private final LoginService loginService;
+    private final RegisterService registerService;
+    private final AdminService adminService;
 
     public Server() {
-        userDAO = new MemUserDao();
-        authDAO = new MemAuthDao();
-        gameDAO = new MemGameDao();
+        MemUserDao userDAO = new MemUserDao();
+        MemAuthDao authDAO = new MemAuthDao();
+        MemGameDao gameDAO = new MemGameDao();
         gameService = new GameService(userDAO, authDAO, gameDAO);
         loginService = new LoginService(userDAO, authDAO);
         registerService = new RegisterService(userDAO, authDAO);
+        adminService = new AdminService(userDAO, authDAO, gameDAO);
     }
 
     public int run(int desiredPort) {
@@ -49,6 +49,7 @@ public class Server {
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
+        Spark.delete("/db", this::clearAll);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -149,6 +150,12 @@ public class Server {
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
 
+        res.status(200);
+        return new Gson().toJson(new Object());
+    }
+
+    private Object clearAll(Request req, Response res) throws ServiceLogicException {
+        adminService.clear();
         res.status(200);
         return new Gson().toJson(new Object());
     }
