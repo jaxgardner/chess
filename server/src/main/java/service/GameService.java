@@ -7,10 +7,13 @@ import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
 import exception.ServiceLogicException;
 import model.GameData;
+import models.GameListResult;
 import models.JoinGameRequest;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class GameService extends Service{
     private final MemAuthDao authDAO;
@@ -22,12 +25,17 @@ public class GameService extends Service{
         this.gameDAO = gameDAO;
     }
 
-    private Collection<GameData> getGames() throws ServiceLogicException {
+    private List<GameListResult> getGames() throws ServiceLogicException {
+        List<GameData> gameData;
         try {
-            return gameDAO.listGames();
+            gameData = gameDAO.listGames();
         } catch (DataAccessException e) {
             throw new ServiceLogicException(500, "Cannot access data");
         }
+
+        return gameData.stream()
+                .map(original -> new GameListResult(original.gameID(), original.whiteUsername(), original.blackUsername(), original.gameName()))
+                .toList();
     }
 
     private int createGameID() {
@@ -45,7 +53,7 @@ public class GameService extends Service{
         }
     }
 
-    public Collection<GameData> retrieveGames(String authToken) throws ServiceLogicException {
+    public List<GameListResult> retrieveGames(String authToken) throws ServiceLogicException {
         if(verifyAuthToken(authToken)) {
             return getGames();
         }
@@ -63,10 +71,10 @@ public class GameService extends Service{
         return null;
     }
 
-    public boolean joinGame(JoinGameRequest req) throws ServiceLogicException {
+    public boolean joinGame(String authToken, JoinGameRequest req) throws ServiceLogicException {
         try {
-            if(super.verifyAuthToken(req.authToken())) {
-                String username = authDAO.getAuth(req.authToken()).username();
+            if(super.verifyAuthToken(authToken)) {
+                String username = authDAO.getAuth(authToken).username();
                 GameData game = gameDAO.getGame(req.gameID());
                 if(game != null) {
                     if(req.playerColor().equals("BLACK")) {

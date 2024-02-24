@@ -8,6 +8,7 @@ import exception.ServiceLogicException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import models.GameListResult;
 import models.JoinGameRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import service.GameService;
 
 import java.util.Collection;
+import java.util.List;
 
 public class GameServiceTests {
     private MemUserDao userDAO;
@@ -58,14 +60,14 @@ public class GameServiceTests {
         gameService.createGame(userAuth.authToken(), "New Game2");
         gameService.createGame(userAuth.authToken(), "New Game3");
 
-        Collection<GameData> games = gameService.retrieveGames(userAuth.authToken());
+        List<GameListResult> games = gameService.retrieveGames(userAuth.authToken());
 
         Assertions.assertEquals(games.size(), 4);
     }
 
     @Test
     public void getGamesUnauthorized() throws Exception {
-        Collection<GameData> games = gameService.retrieveGames("Fasdfasdfasdf");
+        List<GameListResult> games = gameService.retrieveGames("Fasdfasdfasdf");
 
         Assertions.assertNull(games);
     }
@@ -75,9 +77,9 @@ public class GameServiceTests {
         GameData game;
         Integer gameID = gameService.createGame(userAuth.authToken(), "New Game");
 
-        gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "BLACK", gameID));
+        gameService.joinGame(userAuth.authToken(), new JoinGameRequest("BLACK", gameID));
 
-        gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "WHITE", gameID));
+        gameService.joinGame(userAuth.authToken(), new JoinGameRequest("WHITE", gameID));
 
         try {
             game = gameDAO.getGame(gameID);
@@ -93,11 +95,11 @@ public class GameServiceTests {
     public void joinGameWrongID() throws ServiceLogicException {
         Integer gameID = gameService.createGame(userAuth.authToken(), "New Game");
 
-        boolean joinedGame = gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "BLACK", 1243));
+        boolean joinedGame = gameService.joinGame(userAuth.authToken(), new JoinGameRequest( "BLACK", 1243));
 
         Assertions.assertFalse(joinedGame);
 
-        joinedGame = gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "WHITE", 2344));
+        joinedGame = gameService.joinGame(userAuth.authToken(), new JoinGameRequest("WHITE", 2344));
 
         Assertions.assertFalse(joinedGame);
     }

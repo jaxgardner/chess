@@ -4,11 +4,9 @@ import chess.ChessGame;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 public class MemGameDao implements GameDAO {
     HashMap<Integer, GameData> gameDataStorage = new HashMap<>();
@@ -33,10 +31,12 @@ public class MemGameDao implements GameDAO {
         return gameData;
     }
 
-    public Collection<GameData> listGames() throws DataAccessException {
-        Collection<GameData> games;
+    public ArrayList<GameData> listGames() throws DataAccessException {
+        ArrayList<GameData> games = new ArrayList<>();
         try {
-            games = gameDataStorage.values();
+            for(int id : gameDataStorage.keySet()) {
+                games.add(gameDataStorage.get(id));
+            }
         } catch (Exception e) {
             throw new DataAccessException("Cannot connect to server");
         }
