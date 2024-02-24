@@ -1,12 +1,10 @@
 package dataAccess.Memory;
 
-import chess.ChessGame;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Collection;
 
 public class MemGameDao implements GameDAO {
     HashMap<Integer, GameData> gameDataStorage = new HashMap<>();

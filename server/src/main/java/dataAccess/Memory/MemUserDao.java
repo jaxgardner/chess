@@ -4,7 +4,6 @@ import dataAccess.Exceptions.DataAccessException;
 import dataAccess.UserDAO;
 import model.UserData;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 
 public class MemUserDao implements UserDAO {

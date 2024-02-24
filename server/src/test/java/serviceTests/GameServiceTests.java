@@ -94,6 +94,8 @@ public class GameServiceTests {
         gameService.createGame(userAuth.authToken(), "New Game");
 
         Assertions.assertThrows(ServiceLogicException.class, () -> gameService.joinGame(userAuth.authToken(), new JoinGameRequest("WHITE", 2344)));
+        Assertions.assertThrows(ServiceLogicException.class, () -> gameService.joinGame(userAuth.authToken(), new JoinGameRequest("BLACK", 2344)));
+
     }
 
 
