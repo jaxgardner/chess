@@ -1,21 +1,20 @@
 package service;
 
 import chess.ChessGame;
+import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
+import exception.ServiceLogicException;
 import model.GameData;
 import models.JoinGameRequest;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameService extends Service{
     private final MemAuthDao authDAO;
     private final MemGameDao gameDAO;
-
-    private AtomicInteger gameCounter = new AtomicInteger(0);
 
     public GameService(MemUserDao userDAO, MemAuthDao authDAO, MemGameDao gameDAO) {
         super(userDAO, authDAO);
@@ -23,8 +22,12 @@ public class GameService extends Service{
         this.gameDAO = gameDAO;
     }
 
-    private Collection<GameData> getGames() throws Exception {
-        return gameDAO.listGames();
+    private Collection<GameData> getGames() throws ServiceLogicException {
+        try {
+            return gameDAO.listGames();
+        } catch (DataAccessException e) {
+            throw new ServiceLogicException(500, "Cannot access data");
+        }
     }
 
     private int createGameID() {
@@ -33,21 +36,23 @@ public class GameService extends Service{
         return  Integer.parseInt(id);
     }
 
-    private void addGame(String gameName, int gameID) throws Exception {
+    private void addGame(String gameName, int gameID) throws ServiceLogicException {
         GameData newGame = new GameData(gameID, "", "", gameName, new ChessGame());
-
-        gameDAO.addGame(newGame);
+        try {
+            gameDAO.addGame(newGame);
+        } catch (DataAccessException e) {
+            throw new ServiceLogicException(500, "Cannot access data");
+        }
     }
 
-    public Collection<GameData> retrieveGames(String authToken) throws Exception {
+    public Collection<GameData> retrieveGames(String authToken) throws ServiceLogicException {
         if(verifyAuthToken(authToken)) {
             return getGames();
         }
-
         return null;
     }
 
-    public Integer createGame(String authToken, String gameName) throws Exception {
+    public Integer createGame(String authToken, String gameName) throws ServiceLogicException {
         if(super.verifyAuthToken(authToken)) {
             int gameID = createGameID();
             addGame(gameName, gameID);
@@ -58,14 +63,23 @@ public class GameService extends Service{
         return null;
     }
 
-    public void joinGame(JoinGameRequest req) throws Exception {
-        if(super.verifyAuthToken(req.authToken())) {
-            String username = authDAO.getAuth(req.authToken()).username();
-            if(req.playerColor().equals("BLACK")) {
-                gameDAO.updateGameBlack(req.playerColor(), username, req.gameID());
-            } else {
-                gameDAO.updateGameWhite(req.playerColor(), username, req.gameID());
+    public boolean joinGame(JoinGameRequest req) throws ServiceLogicException {
+        try {
+            if(super.verifyAuthToken(req.authToken())) {
+                String username = authDAO.getAuth(req.authToken()).username();
+                GameData game = gameDAO.getGame(req.gameID());
+                if(game != null) {
+                    if(req.playerColor().equals("BLACK")) {
+                        gameDAO.updateGameBlack(req.playerColor(), username, req.gameID());
+                    } else {
+                        gameDAO.updateGameWhite(req.playerColor(), username, req.gameID());
+                    }
+                    return true;
+                }
             }
+        } catch (DataAccessException e) {
+            throw new ServiceLogicException(500, "Cannot connect to data");
         }
+        return false;
     }
 }

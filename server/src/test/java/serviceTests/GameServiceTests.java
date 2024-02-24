@@ -4,9 +4,11 @@ import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
+import exception.ServiceLogicException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import models.JoinGameRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,5 +69,38 @@ public class GameServiceTests {
 
         Assertions.assertNull(games);
     }
+
+    @Test
+    public void joinGame() throws ServiceLogicException {
+        GameData game;
+        Integer gameID = gameService.createGame(userAuth.authToken(), "New Game");
+
+        gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "BLACK", gameID));
+
+        gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "WHITE", gameID));
+
+        try {
+            game = gameDAO.getGame(gameID);
+        } catch (DataAccessException e) {
+            throw new ServiceLogicException(500, "Data cannot be accessed");
+        }
+
+        Assertions.assertEquals(game.blackUsername(), "Jaxrocs");
+        Assertions.assertEquals(game.whiteUsername(), "Jaxrocs");
+    }
+
+    @Test
+    public void joinGameWrongID() throws ServiceLogicException {
+        Integer gameID = gameService.createGame(userAuth.authToken(), "New Game");
+
+        boolean joinedGame = gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "BLACK", 1243));
+
+        Assertions.assertFalse(joinedGame);
+
+        joinedGame = gameService.joinGame(new JoinGameRequest(userAuth.authToken(), "WHITE", 2344));
+
+        Assertions.assertFalse(joinedGame);
+    }
+
 
 }
