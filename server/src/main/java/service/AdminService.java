@@ -1,24 +1,30 @@
 package service;
 
+import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
+import exception.ServiceLogicException;
 
 public class AdminService {
-    private final MemAuthDao authAccess;
-    private final MemGameDao gameAccess;
-    private final MemUserDao userAccess;
+    private final MemUserDao userDAO;
+    private final MemAuthDao authDAO;
+    private final MemGameDao gameDAO;
 
-    public AdminService(MemAuthDao authAccess, MemGameDao gameAccess, MemUserDao userAccess) {
-        this.authAccess = authAccess;
-        this.gameAccess = gameAccess;
-        this.userAccess = userAccess;
+
+    public AdminService(MemUserDao userDAO, MemAuthDao authDAO, MemGameDao gameDAO) {
+        this.userDAO = userDAO;
+        this.authDAO = authDAO;
+        this.gameDAO = gameDAO;
     }
-
-    public void clear() throws Exception{
-        authAccess.clear();
-        gameAccess.clear();
-        userAccess.clear();
+    public void clear() throws ServiceLogicException {
+        try {
+            userDAO.clear();
+            authDAO.clear();
+            gameDAO.clear();
+        } catch (DataAccessException e) {
+            throw new ServiceLogicException(500, "Cannot access Data");
+        }
     }
 
 }

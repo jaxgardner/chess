@@ -71,7 +71,7 @@ public class GameService extends Service{
         return null;
     }
 
-    public boolean joinGame(String authToken, JoinGameRequest req) throws ServiceLogicException {
+    public boolean joinGame(String authToken, JoinGameRequest req) throws ServiceLogicException, DataAccessException {
         try {
             if(super.verifyAuthToken(authToken)) {
                 String username = authDAO.getAuth(authToken).username();
@@ -83,10 +83,12 @@ public class GameService extends Service{
                         gameDAO.updateGameWhite(req.playerColor(), username, req.gameID());
                     }
                     return true;
+                } else {
+                    throw new ServiceLogicException(400, "Error: bad request");
                 }
             }
         } catch (DataAccessException e) {
-            throw new ServiceLogicException(500, "Cannot connect to data");
+            throw new DataAccessException("Cannot connect to data");
         }
         return false;
     }

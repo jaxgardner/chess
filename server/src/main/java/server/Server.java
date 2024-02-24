@@ -1,15 +1,14 @@
 package server;
 
 import com.google.gson.Gson;
+import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
 import exception.ServiceLogicException;
 import model.AuthData;
-import model.GameData;
 import model.UserData;
 import models.*;
-import org.eclipse.jetty.client.HttpRequestException;
 import service.GameService;
 import service.LoginService;
 import service.RegisterService;
@@ -132,15 +131,23 @@ public class Server {
             return new Gson().toJson(new ErrorResponse("Error: unauthorized"));
         }
 
-
         res.status(200);
         return  new Gson().toJson(Map.of("games", games));
     }
 
-    private Object joinGame(Request req, Response res) throws ServiceLogicException {
+    private Object joinGame(Request req, Response res) throws DataAccessException {
         String authToken = req.headers("authorization");
 
         JoinGameRequest gameInfo = new Gson().fromJson(req.body(), JoinGameRequest.class);
+        try {
+            if(!gameService.joinGame(authToken, gameInfo)) {
+                res.status(401);
+                return new Gson().toJson(new ErrorResponse("Error: unauthorized"));
+            }
+        } catch (ServiceLogicException e) {
+            res.status(e.StatusCode());
+            return new Gson().toJson(new ErrorResponse(e.getMessage()));
+        }
 
         res.status(200);
         return new Gson().toJson(new Object());

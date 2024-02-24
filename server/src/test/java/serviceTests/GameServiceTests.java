@@ -73,7 +73,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void joinGame() throws ServiceLogicException {
+    public void joinGame() throws ServiceLogicException, DataAccessException {
         GameData game;
         Integer gameID = gameService.createGame(userAuth.authToken(), "New Game");
 
@@ -93,15 +93,9 @@ public class GameServiceTests {
 
     @Test
     public void joinGameWrongID() throws ServiceLogicException {
-        Integer gameID = gameService.createGame(userAuth.authToken(), "New Game");
+        gameService.createGame(userAuth.authToken(), "New Game");
 
-        boolean joinedGame = gameService.joinGame(userAuth.authToken(), new JoinGameRequest( "BLACK", 1243));
-
-        Assertions.assertFalse(joinedGame);
-
-        joinedGame = gameService.joinGame(userAuth.authToken(), new JoinGameRequest("WHITE", 2344));
-
-        Assertions.assertFalse(joinedGame);
+        Assertions.assertThrows(ServiceLogicException.class, () -> gameService.joinGame(userAuth.authToken(), new JoinGameRequest("WHITE", 2344)));
     }
 
 

@@ -38,6 +38,10 @@ public class MemUserDao implements UserDAO {
         return user;
     }
 
+    public HashMap<String, UserData> getUsers() {
+        return userData;
+    }
+
     public void clear() throws DataAccessException {
         try {
             userData.clear();
