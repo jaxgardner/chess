@@ -10,10 +10,8 @@ import model.GameData;
 import models.GameListResult;
 import models.JoinGameRequest;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class GameService extends Service{
     private final MemAuthDao authDAO;
@@ -45,7 +43,7 @@ public class GameService extends Service{
     }
 
     private void addGame(String gameName, int gameID) throws ServiceLogicException {
-        GameData newGame = new GameData(gameID, "", "", gameName, new ChessGame());
+        GameData newGame = new GameData(gameID, null, null, gameName, new ChessGame());
         try {
             gameDAO.addGame(newGame);
         } catch (DataAccessException e) {
@@ -71,16 +69,30 @@ public class GameService extends Service{
         return null;
     }
 
+    private void handleJoinGame(String username, GameData game, JoinGameRequest req) throws ServiceLogicException, DataAccessException {
+        if(req.playerColor().equals("WHITE")) {
+            if(game.whiteUsername() == null || game.whiteUsername().equals(username)) {
+                gameDAO.updateGameWhite(req.playerColor(), username, req.gameID());
+            } else {
+                throw new ServiceLogicException(403, "Error: already taken");
+            }
+        } else {
+            if(game.blackUsername() == null || game.blackUsername().equals(username)) {
+                gameDAO.updateGameBlack(req.playerColor(), username, req.gameID());
+            } else {
+                throw new ServiceLogicException(403, "Error: already taken");
+            }
+        }
+    }
+
     public boolean joinGame(String authToken, JoinGameRequest req) throws ServiceLogicException, DataAccessException {
         try {
             if(super.verifyAuthToken(authToken)) {
                 String username = authDAO.getAuth(authToken).username();
                 GameData game = gameDAO.getGame(req.gameID());
                 if(game != null) {
-                    if(req.playerColor().equals("BLACK")) {
-                        gameDAO.updateGameBlack(req.playerColor(), username, req.gameID());
-                    } else {
-                        gameDAO.updateGameWhite(req.playerColor(), username, req.gameID());
+                    if(req.playerColor() != null) {
+                        handleJoinGame(username, game, req);
                     }
                     return true;
                 } else {

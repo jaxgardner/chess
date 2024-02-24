@@ -15,8 +15,7 @@ import service.LoginService;
 import service.RegisterService;
 import spark.*;
 
-import java.util.Collection;
-import java.util.List;
+
 import java.util.Map;
 
 public class Server {
@@ -63,7 +62,7 @@ public class Server {
     private Object registerNewUser(Request req, Response res) throws ServiceLogicException {
         var userInfo = new Gson().fromJson(req.body(), UserData.class);
 
-        if(userInfo.username().isEmpty() || userInfo.password().isEmpty() || userInfo.email().isEmpty()) {
+        if(userInfo.username() == null || userInfo.password() == null || userInfo.email() == null) {
             res.status(400);
             return new Gson().toJson(new ErrorResponse("Error: bad request"));
         }
@@ -107,7 +106,7 @@ public class Server {
         String authToken = req.headers("authorization");
         var gameInfo = new Gson().fromJson(req.body(), CreateGameRequest.class);
 
-        if(gameInfo.gameName().isEmpty()) {
+        if(gameInfo.gameName() == null) {
             res.status(400);
             return new Gson().toJson(new ErrorResponse("Error: bad request"));
         }

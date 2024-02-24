@@ -7,7 +7,6 @@ import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
 
-import javax.xml.crypto.Data;
 import java.util.UUID;
 
 public class Service {
