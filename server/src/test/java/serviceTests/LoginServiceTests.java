@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import service.LoginService;
 import service.RegisterService;
 
-import javax.xml.crypto.Data;
 
 public class LoginServiceTests {
     private MemUserDao userDAO;
