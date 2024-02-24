@@ -47,10 +47,6 @@ public class MemAuthDao implements AuthDAO {
 
     }
 
-    public HashMap<String, AuthData> getAuthData() {
-        return authData;
-    }
-
     public void clear() throws DataAccessException {
         try {
             authData.clear();

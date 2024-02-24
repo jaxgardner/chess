@@ -60,7 +60,7 @@ public class Server {
     }
 
     private void exceptionHandler(ServiceLogicException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
     }
 
     private Object registerNewUser(Request req, Response res) throws ServiceLogicException {
@@ -149,7 +149,7 @@ public class Server {
                 return new Gson().toJson(new ErrorResponse("Error: unauthorized"));
             }
         } catch (ServiceLogicException e) {
-            res.status(e.StatusCode());
+            res.status(e.statusCode());
             return new Gson().toJson(new ErrorResponse(e.getMessage()));
         }
 

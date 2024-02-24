@@ -68,10 +68,6 @@ public class MemGameDao implements GameDAO {
         }
     }
 
-    public HashMap<Integer, GameData> getGameDataStorage() {
-        return gameDataStorage;
-    }
-
     public void clear() throws DataAccessException {
         try {
             gameDataStorage.clear();

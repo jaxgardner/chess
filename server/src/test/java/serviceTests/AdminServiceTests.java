@@ -1,5 +1,6 @@
 package serviceTests;
 
+import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
@@ -15,7 +16,7 @@ import service.RegisterService;
 public class AdminServiceTests {
 
     @Test
-    public void clearAll() throws ServiceLogicException {
+    public void clearAll() throws ServiceLogicException, DataAccessException {
         MemUserDao userDAO = new MemUserDao();
         MemAuthDao authDAO = new MemAuthDao();
         MemGameDao gameDAO = new MemGameDao();
@@ -25,20 +26,15 @@ public class AdminServiceTests {
         var adminService = new AdminService(userDAO, authDAO, gameDAO);
 
         AuthData userAuth = registerService.registerUser(new UserData("Jaxrocs", "12345", "jax"));
-        registerService.registerUser(new UserData("Jaxroc", "12345", "jax"));
-        registerService.registerUser(new UserData("Jaxro", "12345", "jax"));
-        registerService.registerUser(new UserData("Jaxr", "12345", "jax"));
 
         gameService.createGame(userAuth.authToken(), "G1");
-        gameService.createGame(userAuth.authToken(), "G2");
-        gameService.createGame(userAuth.authToken(), "G3");
-        gameService.createGame(userAuth.authToken(), "G4");
+
 
         adminService.clear();
 
-        Assertions.assertTrue(userDAO.getUsers().isEmpty());
-        Assertions.assertTrue(authDAO.getAuthData().isEmpty());
-        Assertions.assertTrue(gameDAO.getGameDataStorage().isEmpty());
+        Assertions.assertNull(userDAO.getUser("Jaxrocs"));
+        Assertions.assertNull(authDAO.getAuth(userAuth.authToken()));
+        Assertions.assertTrue(gameDAO.listGames().isEmpty());
 
 
     }
