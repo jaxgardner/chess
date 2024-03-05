@@ -13,9 +13,9 @@ import java.util.UUID;
 
 public class Service {
     UserDAO userDAO;
-    MemAuthDao authDAO;
+    AuthDAO authDAO;
 
-    public Service(UserDAO userDAO, MemAuthDao authDAO) {
+    public Service(UserDAO userDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }

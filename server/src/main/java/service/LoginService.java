@@ -1,5 +1,6 @@
 package service;
 
+import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemUserDao;
@@ -13,9 +14,9 @@ import java.util.Objects;
 
 public class LoginService extends Service {
 
-    private final MemAuthDao authDAO;
+    private final AuthDAO authDAO;
 
-    public LoginService(UserDAO userDao, MemAuthDao authDao) {
+    public LoginService(UserDAO userDao, AuthDAO authDao) {
         super(userDao, authDao);
         this.authDAO = authDao;
     }

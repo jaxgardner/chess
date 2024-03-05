@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
@@ -15,10 +16,10 @@ import java.util.List;
 import java.util.Random;
 
 public class GameService extends Service{
-    private final MemAuthDao authDAO;
+    private final AuthDAO authDAO;
     private final MemGameDao gameDAO;
 
-    public GameService(UserDAO userDAO, MemAuthDao authDAO, MemGameDao gameDAO) {
+    public GameService(UserDAO userDAO, AuthDAO authDAO, MemGameDao gameDAO) {
         super(userDAO, authDAO);
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;

@@ -1,5 +1,6 @@
 package service;
 
+import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemUserDao;
@@ -11,7 +12,7 @@ import model.UserData;
 public class RegisterService extends Service {
     private final UserDAO userDAO;
 
-    public RegisterService(UserDAO userDAO, MemAuthDao authDAO) {
+    public RegisterService(UserDAO userDAO, AuthDAO authDAO) {
         super(userDAO, authDAO);
         this.userDAO = userDAO;
     }

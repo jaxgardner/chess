@@ -28,8 +28,8 @@ public class SqlUserDao implements UserDAO {
 
     private final String[] createStatements = {
         """
-        CREATE TABLE IF NOT EXISTS userData (
-          `UserId` int NOT NULL AUTO_INCREMENT,
+        CREATE TABLE IF NOT EXISTS userdata (
+          `UserID` int NOT NULL AUTO_INCREMENT,
           `Username` varchar(255) NOT NULL,
           `Password` varchar(255) NOT NULL,
           PRIMARY KEY (`UserId`)
