@@ -5,6 +5,7 @@ import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
+import dataAccess.MySql.SqlUserDao;
 import exception.ServiceLogicException;
 import model.*;
 import service.AdminService;
@@ -22,10 +23,10 @@ public class Server {
     private final RegisterService registerService;
     private final AdminService adminService;
 
-    public Server() {
-        MemUserDao userDAO = new MemUserDao();
-        MemAuthDao authDAO = new MemAuthDao();
-        MemGameDao gameDAO = new MemGameDao();
+    public Server() throws DataAccessException {
+        var userDAO = new SqlUserDao();
+        var authDAO = new MemAuthDao();
+        var gameDAO = new MemGameDao();
         gameService = new GameService(userDAO, authDAO, gameDAO);
         loginService = new LoginService(userDAO, authDAO);
         registerService = new RegisterService(userDAO, authDAO);

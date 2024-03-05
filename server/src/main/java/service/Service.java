@@ -1,8 +1,10 @@
 package service;
 
+import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemUserDao;
+import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
@@ -10,10 +12,10 @@ import model.UserData;
 import java.util.UUID;
 
 public class Service {
-    MemUserDao userDAO;
+    UserDAO userDAO;
     MemAuthDao authDAO;
 
-    public Service(MemUserDao userDAO, MemAuthDao authDAO) {
+    public Service(UserDAO userDAO, MemAuthDao authDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }

@@ -3,6 +3,7 @@ package service;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemUserDao;
+import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
@@ -14,7 +15,7 @@ public class LoginService extends Service {
 
     private final MemAuthDao authDAO;
 
-    public LoginService(MemUserDao userDao, MemAuthDao authDao) {
+    public LoginService(UserDAO userDao, MemAuthDao authDao) {
         super(userDao, authDao);
         this.authDAO = authDao;
     }

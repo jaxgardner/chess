@@ -17,9 +17,9 @@ public class AdminServiceTests {
 
     @Test
     public void clearAll() throws ServiceLogicException, DataAccessException {
-        MemUserDao userDAO = new MemUserDao();
-        MemAuthDao authDAO = new MemAuthDao();
-        MemGameDao gameDAO = new MemGameDao();
+        var userDAO = new MemUserDao();
+        var authDAO = new MemAuthDao();
+        var gameDAO = new MemGameDao();
 
         var registerService = new RegisterService(userDAO, authDAO);
         var gameService = new GameService(userDAO, authDAO, gameDAO);
@@ -29,13 +29,10 @@ public class AdminServiceTests {
 
         gameService.createGame(userAuth.authToken(), "G1");
 
-
         adminService.clear();
 
         Assertions.assertNull(userDAO.getUser("Jaxrocs"));
         Assertions.assertNull(authDAO.getAuth(userAuth.authToken()));
         Assertions.assertTrue(gameDAO.listGames().isEmpty());
-
-
     }
 }

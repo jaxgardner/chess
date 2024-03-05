@@ -5,6 +5,7 @@ import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
+import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.GameData;
 import model.GameListResult;
@@ -17,7 +18,7 @@ public class GameService extends Service{
     private final MemAuthDao authDAO;
     private final MemGameDao gameDAO;
 
-    public GameService(MemUserDao userDAO, MemAuthDao authDAO, MemGameDao gameDAO) {
+    public GameService(UserDAO userDAO, MemAuthDao authDAO, MemGameDao gameDAO) {
         super(userDAO, authDAO);
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
