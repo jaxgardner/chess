@@ -6,6 +6,7 @@ import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
 import dataAccess.MySql.SqlAuthDao;
+import dataAccess.MySql.SqlGameDao;
 import dataAccess.MySql.SqlUserDao;
 import exception.ServiceLogicException;
 import model.*;
@@ -27,7 +28,7 @@ public class Server {
     public Server() throws DataAccessException {
         var userDAO = new SqlUserDao();
         var authDAO = new SqlAuthDao();
-        var gameDAO = new MemGameDao();
+        var gameDAO = new SqlGameDao();
         gameService = new GameService(userDAO, authDAO, gameDAO);
         loginService = new LoginService(userDAO, authDAO);
         registerService = new RegisterService(userDAO, authDAO);
