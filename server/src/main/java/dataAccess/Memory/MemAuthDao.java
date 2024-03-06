@@ -34,16 +34,13 @@ public class MemAuthDao implements AuthDAO {
         return userAuth;
     }
 
-    public AuthData deleteAuth(String authToken) throws DataAccessException {
-        AuthData deletedData;
+    public void deleteAuth(String authToken) throws DataAccessException {
 
         try {
-             deletedData = authData.remove(authToken);
+             authData.remove(authToken);
         } catch (Exception e) {
             throw  new DataAccessException("Cannot connect to server");
         }
-
-        return deletedData;
 
     }
 

@@ -78,7 +78,7 @@ public class SqlUserDao implements UserDAO {
 
     public void clear() throws DataAccessException{
         try(var conn = DatabaseManager.getConnection()) {
-            final var statement = "DELETE FROM userdata";
+            final var statement = "TRUNCATE TABLE userdata";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.executeUpdate();
             }

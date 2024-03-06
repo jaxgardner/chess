@@ -30,9 +30,11 @@ public class RegisterService extends Service {
 
         if(userFromDB == null) {
             int userId = createNewUser(userData);
-            AuthData newUserAuth = super.generateAuth(userData.username());
-            super.addToAuthData(newUserAuth);
-            return newUserAuth;
+            if(userId >= 0) {
+                AuthData newUserAuth = super.generateAuth(userData.username());
+                super.addToAuthData(newUserAuth);
+                return newUserAuth;
+            }
         }
 
         return null;
