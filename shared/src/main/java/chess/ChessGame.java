@@ -18,6 +18,7 @@ public class ChessGame {
 
     public ChessGame() {
         gameBoard = new ChessBoard();
+        gameBoard.resetBoard();
         currentTurn = TeamColor.BLACK;
     }
 

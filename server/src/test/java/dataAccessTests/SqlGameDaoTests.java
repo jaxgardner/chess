@@ -95,6 +95,12 @@ public class SqlGameDaoTests {
     }
 
     @Test
+    public void gameMoves() throws DataAccessException {
+        gameDAO.addGame(new GameData(2412, "Jax1", "Jax2", "Game1", new ChessGame()));
+
+    }
+
+    @Test
     public void updateGameDataBadData() throws DataAccessException {
         gameDAO.addGame(new GameData(2412, "Jax1", "Jax2", "Game1", new ChessGame()));
 
