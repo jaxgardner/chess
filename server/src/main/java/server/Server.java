@@ -33,6 +33,9 @@ public class Server {
         loginService = new LoginService(userDAO, authDAO);
         registerService = new RegisterService(userDAO, authDAO);
         adminService = new AdminService(userDAO, authDAO, gameDAO);
+        userDAO.createUser(new UserData("Jaxon", "12345", "jax"));
+        userDAO.getUser("Jaxon");
+        userDAO.clear();
     }
 
     public int run(int desiredPort) {

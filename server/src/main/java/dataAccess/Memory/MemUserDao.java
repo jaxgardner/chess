@@ -13,7 +13,7 @@ public class MemUserDao implements UserDAO {
 
 
     // Change to more specific exception when connecting to database
-    public UserData createUser(UserData user) throws DataAccessException {
+    public int createUser(UserData user) throws DataAccessException {
 
         try{
             userData.put(user.username(), user);
@@ -21,7 +21,7 @@ public class MemUserDao implements UserDAO {
             throw new DataAccessException("Can't connect to database");
         }
 
-        return user;
+        return 1;
     }
 
     // Change to more specific exception when connecting to database

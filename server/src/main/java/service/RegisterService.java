@@ -17,9 +17,9 @@ public class RegisterService extends Service {
         this.userDAO = userDAO;
     }
 
-    private void createNewUser(UserData user) throws ServiceLogicException {
+    private int createNewUser(UserData user) throws ServiceLogicException {
         try {
-            userDAO.createUser(user);
+            return userDAO.createUser(user);
         } catch (DataAccessException e) {
             throw new ServiceLogicException(500, "Cannot access data");
         }
@@ -29,7 +29,7 @@ public class RegisterService extends Service {
         UserData userFromDB = getUser(userData.username());
 
         if(userFromDB == null) {
-            createNewUser(userData);
+            int userId = createNewUser(userData);
             AuthData newUserAuth = super.generateAuth(userData.username());
             super.addToAuthData(newUserAuth);
             return newUserAuth;
