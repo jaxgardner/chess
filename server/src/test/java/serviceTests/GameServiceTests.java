@@ -1,9 +1,15 @@
 package serviceTests;
 
+import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
+import dataAccess.GameDAO;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
+import dataAccess.MySql.SqlAuthDao;
+import dataAccess.MySql.SqlGameDao;
+import dataAccess.MySql.SqlUserDao;
+import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.GameData;
@@ -18,17 +24,21 @@ import service.GameService;
 import java.util.List;
 
 public class GameServiceTests {
-    private MemUserDao userDAO;
-    private MemAuthDao authDAO;
-    private MemGameDao gameDAO;
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
+    private GameDAO gameDAO;
     private GameService gameService;
     private AuthData userAuth;
 
     @BeforeEach
     public void setup() throws DataAccessException {
-        userDAO = new MemUserDao();
-        authDAO = new MemAuthDao();
-        gameDAO = new MemGameDao();
+        userDAO = new SqlUserDao();
+        authDAO = new SqlAuthDao();
+        gameDAO = new SqlGameDao();
+
+        userDAO.clear();
+        authDAO.clear();
+        gameDAO.clear();
 
         gameService = new GameService(userDAO, authDAO, gameDAO);
 

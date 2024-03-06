@@ -23,6 +23,10 @@ public class AdminServiceTests {
         var userDAO = new SqlUserDao();
         var authDAO = new SqlAuthDao();
         var gameDAO = new SqlGameDao();
+        userDAO.clear();
+        authDAO.clear();
+        gameDAO.clear();
+
 
         var registerService = new RegisterService(userDAO, authDAO);
         var gameService = new GameService(userDAO, authDAO, gameDAO);

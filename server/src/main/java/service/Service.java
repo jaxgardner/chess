@@ -33,18 +33,12 @@ public class Service {
 
         String uuidString = uuid.toString();
 
-        AuthData newUserAuth = new AuthData(uuidString, username);
-
-        try {
-            return authDAO.createAuth(newUserAuth);
-        } catch (DataAccessException e) {
-            throw new ServiceLogicException(500, "Cannot access data");
-        }
+        return new AuthData(uuidString, username);
     }
 
-    protected void addToAuthData(AuthData userAuth) throws ServiceLogicException {
+    protected AuthData addToAuthData(AuthData userAuth) throws ServiceLogicException {
         try {
-            authDAO.createAuth(userAuth);
+            return  authDAO.createAuth(userAuth);
         } catch(DataAccessException e) {
             throw new ServiceLogicException(500, e.getMessage());
         }

@@ -36,9 +36,9 @@ public class RegisterServiceTests {
     }
 
     @Test
-    public void registerAlreadyCreatedUser() throws ServiceLogicException {
-        var userDAO = new MemUserDao();
-        var authDAO = new MemAuthDao();
+    public void registerAlreadyCreatedUser() throws ServiceLogicException, DataAccessException {
+        var userDAO = new SqlUserDao();
+        var authDAO = new SqlAuthDao();
 
         var newUser = new UserData("Jaxrocs", "12345", "jaxrocs@byu.edu");
 

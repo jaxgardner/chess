@@ -61,7 +61,6 @@ public class SqlUserDaoTests {
         Assertions.assertNull(user);
     }
 
-
     @Test
     public void clearUsers() throws DataAccessException {
         userDAO.createUser(new UserData("Jaxon", "12345", "jasdfa"));

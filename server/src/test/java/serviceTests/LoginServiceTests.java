@@ -1,8 +1,12 @@
 package serviceTests;
 
+import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemUserDao;
+import dataAccess.MySql.SqlAuthDao;
+import dataAccess.MySql.SqlUserDao;
+import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
@@ -15,15 +19,18 @@ import service.RegisterService;
 
 
 public class LoginServiceTests {
-    private MemUserDao userDAO;
-    MemAuthDao authDAO;
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
     private LoginService loginService;
 
     private AuthData newUserAuth;
     @BeforeEach
     public void setup() throws Exception {
-        userDAO = new MemUserDao();
-        authDAO = new MemAuthDao();
+        userDAO = new SqlUserDao();
+        authDAO = new SqlAuthDao();
+        userDAO.clear();
+        authDAO.clear();
+
         RegisterService registerService = new RegisterService(userDAO, authDAO);
 
         newUserAuth = registerService.registerUser(new UserData("Jaxrocs", "12345", "jaxrocs@byu.edu"));
