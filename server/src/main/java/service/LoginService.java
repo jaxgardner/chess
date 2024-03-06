@@ -9,6 +9,7 @@ import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
 import model.LoginRequest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Objects;
 
@@ -25,7 +26,8 @@ public class LoginService extends Service {
     private boolean checkLoginPassword(LoginRequest userLogin) throws ServiceLogicException {
         UserData userFromDB = getUser(userLogin.username());
 
-        return userFromDB != null && Objects.equals(userLogin.password(), userFromDB.password());
+
+        return userFromDB != null && encoder.matches(userLogin.password(), userFromDB.password());
     }
 
 

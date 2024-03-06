@@ -8,16 +8,20 @@ import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.UUID;
 
 public class Service {
     UserDAO userDAO;
     AuthDAO authDAO;
+    protected BCryptPasswordEncoder encoder;
 
     public Service(UserDAO userDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
+        encoder = new BCryptPasswordEncoder();
+
     }
 
     protected UserData getUser(String username) throws ServiceLogicException {
@@ -36,9 +40,9 @@ public class Service {
         return new AuthData(uuidString, username);
     }
 
-    protected AuthData addToAuthData(AuthData userAuth) throws ServiceLogicException {
+    protected void addToAuthData(AuthData userAuth) throws ServiceLogicException {
         try {
-            return  authDAO.createAuth(userAuth);
+            authDAO.createAuth(userAuth);
         } catch(DataAccessException e) {
             throw new ServiceLogicException(500, e.getMessage());
         }
@@ -52,6 +56,10 @@ public class Service {
             throw new ServiceLogicException(500, "Cannot access data");
         }
         return userAuth != null;
+    }
+
+    protected String hashPassword (String password) {
+        return encoder.encode(password);
     }
 
 }

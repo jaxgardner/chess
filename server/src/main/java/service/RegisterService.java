@@ -8,6 +8,7 @@ import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class RegisterService extends Service {
     private final UserDAO userDAO;
@@ -17,9 +18,12 @@ public class RegisterService extends Service {
         this.userDAO = userDAO;
     }
 
+
     private int createNewUser(UserData user) throws ServiceLogicException {
         try {
-            return userDAO.createUser(user);
+            String hashedPassword = hashPassword(user.password());
+            var alteredUser = new UserData(user.username(), hashedPassword, user.email());
+            return userDAO.createUser(alteredUser);
         } catch (DataAccessException e) {
             throw new ServiceLogicException(500, "Cannot access data");
         }

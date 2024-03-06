@@ -44,7 +44,7 @@ public class LoginServiceTests {
         UserData user = userDAO.getUser("Jaxrocs");
         UserData mockUser = new UserData("Jaxrocs", "12345", "jaxrocs@byu.edu" );
 
-        Assertions.assertEquals(user, mockUser);
+        Assertions.assertEquals(user.username(), mockUser.username());
 
     }
 
