@@ -75,13 +75,13 @@ public class GameService extends Service{
     private void handleJoinGame(String username, GameData game, JoinGameRequest req) throws ServiceLogicException, DataAccessException {
         if(req.playerColor().equals("WHITE")) {
             if(game.whiteUsername() == null || game.whiteUsername().equals(username)) {
-                gameDAO.updateGameWhite(req.playerColor(), username, req.gameID());
+                gameDAO.updateGameWhite(username, req.gameID());
             } else {
                 throw new ServiceLogicException(403, "Error: already taken");
             }
         } else {
             if(game.blackUsername() == null || game.blackUsername().equals(username)) {
-                gameDAO.updateGameBlack(req.playerColor(), username, req.gameID());
+                gameDAO.updateGameBlack(username, req.gameID());
             } else {
                 throw new ServiceLogicException(403, "Error: already taken");
             }

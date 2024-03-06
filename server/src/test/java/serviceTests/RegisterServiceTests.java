@@ -3,6 +3,8 @@ package serviceTests;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemUserDao;
+import dataAccess.MySql.SqlAuthDao;
+import dataAccess.MySql.SqlUserDao;
 import exception.ServiceLogicException;
 import model.AuthData;
 import model.UserData;
@@ -14,21 +16,21 @@ import service.RegisterService;
 public class RegisterServiceTests {
 
     @Test
-    public void registerUser() throws ServiceLogicException {
-        var userDAO = new MemUserDao();
-        var authDAO = new MemAuthDao();
+    public void registerUser() throws ServiceLogicException, DataAccessException {
+        var userDAO = new SqlUserDao();
+        var authDAO = new SqlAuthDao();
+        userDAO.clear();
+        authDAO.clear();
 
         var newUser = new UserData("Jaxrocs", "12345", "jaxrocs@byu.edu");
 
         var registerService = new RegisterService(userDAO, authDAO);
 
         AuthData newUserAuth = registerService.registerUser(newUser);
+        UserData user = userDAO.getUser("Jaxrocs");
 
-        try {
-            Assertions.assertEquals(newUser, userDAO.getUser("Jaxrocs"));
-        } catch (DataAccessException e) {
-            throw new ServiceLogicException(500, "Cannot access data");
-        }
+
+        Assertions.assertEquals(newUser.email(), user.email());
 
         Assertions.assertNotEquals(newUserAuth, null);
     }

@@ -46,7 +46,7 @@ public class Service {
         try {
             authDAO.createAuth(userAuth);
         } catch(DataAccessException e) {
-            throw new ServiceLogicException(500, "Cannot access data");
+            throw new ServiceLogicException(500, e.getMessage());
         }
     }
 

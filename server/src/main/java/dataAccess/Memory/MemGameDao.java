@@ -42,7 +42,7 @@ public class MemGameDao implements GameDAO {
         return games;
     }
 
-    public void updateGameWhite(String playerColor, String username, int gameID) throws DataAccessException {
+    public void updateGameWhite(String username, int gameID) throws DataAccessException {
         try {
             GameData game = getGame(gameID);
             GameData updatedGame = null;
@@ -55,7 +55,7 @@ public class MemGameDao implements GameDAO {
         }
     }
 
-    public void updateGameBlack(String playerColor, String username, int gameID) throws DataAccessException {
+    public void updateGameBlack(String username, int gameID) throws DataAccessException {
         try {
             GameData game = getGame(gameID);
             GameData updatedGame = null;
