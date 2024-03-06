@@ -21,9 +21,7 @@ public class SqlGameDao implements GameDAO {
             `GameName` VARCHAR(255) NOT NULL,
             `WhiteUserID` INT NOT NULL,
             `BlackUserID` INT NOT NULL,
-            `Chessgame` JSON,
-            FOREIGN KEY (WhiteUserID) REFERENCES userdata(UserID),
-            FOREIGN KEY (BlackUserID) REFERENCES userdata(UserID)
+            `Chessgame` JSON
         );
         """
     };

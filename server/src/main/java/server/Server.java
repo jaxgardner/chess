@@ -1,13 +1,16 @@
 package server;
 
 import com.google.gson.Gson;
+import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
+import dataAccess.GameDAO;
 import dataAccess.Memory.MemAuthDao;
 import dataAccess.Memory.MemGameDao;
 import dataAccess.Memory.MemUserDao;
 import dataAccess.MySql.SqlAuthDao;
 import dataAccess.MySql.SqlGameDao;
 import dataAccess.MySql.SqlUserDao;
+import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.*;
 import service.AdminService;
@@ -20,22 +23,29 @@ import spark.*;
 import java.util.Map;
 
 public class Server {
+    private UserDAO userDAO;
+    private AuthDAO authDAO;
+    private GameDAO gameDAO;
     private final GameService gameService;
     private final LoginService loginService;
     private final RegisterService registerService;
     private final AdminService adminService;
 
-    public Server() throws DataAccessException {
-        var userDAO = new SqlUserDao();
-        var authDAO = new SqlAuthDao();
-        var gameDAO = new SqlGameDao();
+    public Server() {
+        try {
+            userDAO = new SqlUserDao();
+            authDAO = new SqlAuthDao();
+            gameDAO = new SqlGameDao();
+
+        }
+        catch (Throwable ex) {
+            System.out.println(ex.getMessage());
+        }
+
         gameService = new GameService(userDAO, authDAO, gameDAO);
         loginService = new LoginService(userDAO, authDAO);
         registerService = new RegisterService(userDAO, authDAO);
         adminService = new AdminService(userDAO, authDAO, gameDAO);
-        userDAO.createUser(new UserData("Jaxon", "12345", "jax"));
-        userDAO.getUser("Jaxon");
-        userDAO.clear();
     }
 
     public int run(int desiredPort) {

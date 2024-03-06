@@ -5,10 +5,8 @@ import dataAccess.Exceptions.DataAccessException;
 import dataAccess.UserDAO;
 import model.UserData;
 
-import javax.swing.text.Style;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -19,27 +17,29 @@ public class SqlUserDao implements UserDAO {
     }
 
     public int createUser(UserData user) throws DataAccessException {
+        if(!(user.username().isEmpty() || user.password().isEmpty() || user.email().isEmpty())) {
+            try(var conn = DatabaseManager.getConnection()) {
+                final var statement = "INSERT INTO userdata (Username, Password, Email) VALUES (?, ?, ?)";
+                try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                    ps.setString(1, user.username());
+                    ps.setString(2, user.password());
+                    ps.setString(3, user.email());
 
-        try(var conn = DatabaseManager.getConnection()) {
-            final var statement = "INSERT INTO userdata (Username, Password, Email) VALUES (?, ?, ?)";
-            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                ps.setString(1, user.username());
-                ps.setString(2, user.password());
-                ps.setString(3, user.email());
-
-                var rows = ps.executeUpdate();
-                if(rows > 0) {
-                    try (var userId = ps.getGeneratedKeys()) {
-                        if(userId.next()) {
-                            return userId.getInt(1);
+                    var rows = ps.executeUpdate();
+                    if(rows > 0) {
+                        try (var userId = ps.getGeneratedKeys()) {
+                            if(userId.next()) {
+                                return userId.getInt(1);
+                            }
                         }
                     }
                 }
             }
+            catch (SQLException e) {
+                throw new DataAccessException(e.getMessage());
+            }
         }
-        catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
+
 
         return -1;
     }
