@@ -1,5 +1,10 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
+
 import static ui.EscapeSequences.*;
 
 import java.io.PrintStream;
@@ -7,39 +12,80 @@ import java.nio.charset.StandardCharsets;
 
 public class BoardPrinter {
     private static final int BOARD_SIZE = 10;
-    private static final int LINE_WIDTH = 1;
+    private static final String LINE_SPACE = " ";
     private final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+    private static final String COORDINATES_BLACK = " abcdefgh ";
+    private static final String COORDINATES_WHITE = " hgfedcba ";
+    private static final String NUMBERS_WHITE = "12345678";
+    private static final String NUMBERS_BLACK = "87654321";
 
-    private static String coordinates = " abcdefgh ";
-    private static String coordinatesNumbers = "123445678";
-    private static String coordinatesReversed = "  h  g  f  e  d  c  b  a  ";
+    private final ChessBoard board;
 
 
-     public void printChessBoard() {
+    public BoardPrinter() {
+        board = new ChessBoard();
+        board.resetBoard();
+    }
 
-         for(int i = 0; i < 10; ++i) {
-             out.print(SET_BG_COLOR_DARK_GREY + " " +  coordinates.charAt(i) + " " + "\u001B[0m");
+    public void printChessBoard(String teamColor) {
+         String coords;
+         String nums;
+
+         if(teamColor.equals("white")) {
+             coords = COORDINATES_WHITE;
+             nums = NUMBERS_WHITE;
+         }
+         else {
+             coords = COORDINATES_BLACK;
+             nums = NUMBERS_BLACK;
          }
 
-         out.println();
-
-         for (int i = 0; i <= 8; i++) {
-             out.print(SET_BG_COLOR_DARK_GREY + " " + coordinatesNumbers.charAt(i) + " " + "\u001B[0m");
-             for (int j = 0; j < 8; j++) {
-                 if ((i + j) % 2 == 0) {
-                     out.print(SET_BG_COLOR_BLACK  + "   " + "\u001B[0m");
-                 } else {
-                     out.print(SET_BG_COLOR_LIGHT_GREY  + "   " + "\u001B[0m");
-                 }
-             }
-             out.print(SET_BG_COLOR_DARK_GREY + " " + coordinatesNumbers.charAt(i) + " " + "\u001B[0m");
-             out.println(); // Move to the next line after printing each row
-         }
-
-         for(int i = 0; i < 10; ++i) {
-             out.print(SET_BG_COLOR_DARK_GREY + " " +  coordinates.charAt(i) + " " + "\u001B[0m");
-         }
-
-         out.println();
+         printLetters(coords);
+         printCheckers(nums);
+         printLetters(coords);
      }
+
+    private void printCheckers(String nums) {
+        for (int i = 0; i < 8; i++) {
+            out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + nums.charAt(i) + LINE_SPACE + "\u001B[0m");
+            for (int j = 0; j < 8; j++) {
+                printPiece(new ChessPosition(i + 1, j + 1));
+            }
+            out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + nums.charAt(i) + LINE_SPACE + "\u001B[0m");
+            out.println(); // Move to the next line after printing each row
+        }
+    }
+
+
+    private void printLetters(String coordinates) {
+        for (int i = 0; i < BOARD_SIZE; ++i) {
+            out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + coordinates.charAt(i) + LINE_SPACE + "\u001B[0m");
+        }
+        out.println();
+    }
+
+    private void printPiece(ChessPosition position) {
+        ChessPiece piece = board.getPiece(position);
+
+        if(piece != null) {
+            out.print(getBGColor(position.getRow(), position.getColumn())  + getPieceColor(piece) + LINE_SPACE + piece + LINE_SPACE + "\u001B[0m");
+        }
+        else {
+            out.print(getBGColor(position.getRow(), position.getColumn())  + LINE_SPACE.repeat(3) + "\u001B[0m");
+        }
+    }
+
+    private String getPieceColor(ChessPiece piece) {
+        if(piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            return SET_TEXT_COLOR_GREEN;
+        }
+        return SET_TEXT_COLOR_WHITE;
+    }
+
+    private String getBGColor(int i, int j) {
+        if((i + j) % 2 == 0) {
+            return SET_BG_COLOR_LIGHT_GREY;
+        }
+        return SET_BG_COLOR_BLACK;
+    }
 }
