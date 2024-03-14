@@ -18,7 +18,6 @@ public class BoardPrinter {
     private static final String COORDINATES_WHITE = " hgfedcba ";
     private static final String NUMBERS_WHITE = "12345678";
     private static final String NUMBERS_BLACK = "87654321";
-
     private final ChessBoard board;
 
 
@@ -49,7 +48,8 @@ public class BoardPrinter {
         for (int i = 0; i < 8; i++) {
             out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + nums.charAt(i) + LINE_SPACE + "\u001B[0m");
             for (int j = 0; j < 8; j++) {
-                printPiece(new ChessPosition(i + 1, j + 1));
+                ChessPosition position = getPosition(nums, i + 1, j + 1);
+                printPiece(position);
             }
             out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + nums.charAt(i) + LINE_SPACE + "\u001B[0m");
             out.println(); // Move to the next line after printing each row
@@ -79,7 +79,7 @@ public class BoardPrinter {
         if(piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             return SET_TEXT_COLOR_GREEN;
         }
-        return SET_TEXT_COLOR_WHITE;
+        return SET_TEXT_COLOR_BLUE;
     }
 
     private String getBGColor(int i, int j) {
@@ -87,5 +87,14 @@ public class BoardPrinter {
             return SET_BG_COLOR_LIGHT_GREY;
         }
         return SET_BG_COLOR_BLACK;
+    }
+
+    private ChessPosition getPosition(String nums, int i , int j) {
+       if(nums.equals(NUMBERS_BLACK)) {
+            i = 9 - i;
+            return new ChessPosition(i, j);
+       }
+
+       return new ChessPosition(i, j);
     }
 }
