@@ -52,7 +52,7 @@ public class BoardPrinter {
                 printPiece(position);
             }
             out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + nums.charAt(i) + LINE_SPACE + "\u001B[0m");
-            out.println(); // Move to the next line after printing each row
+            out.println();
         }
     }
 
@@ -94,7 +94,6 @@ public class BoardPrinter {
             i = 9 - i;
             return new ChessPosition(i, j);
        }
-
        return new ChessPosition(i, j);
     }
 }
