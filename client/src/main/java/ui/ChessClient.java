@@ -54,7 +54,8 @@ public class ChessClient   {
         if(Objects.equals(result, "Registered!")) {
             state = ClientState.SIGNEDIN;
         }
-        return result;
+        System.out.println(result);
+        return help();
     }
 
     public String login(String... params) throws ClientException {
@@ -100,9 +101,16 @@ public class ChessClient   {
         }
         StringBuilder games = new StringBuilder();
 
-        for(GameListResult game : res) {
-            games.append(game.gameID()).append(". ").append(game.gameName()).append('\n');
+        for(int i = 1; i <= res.size(); i++) {
+            String num = i + ". ";
+            String gameName = res.get(i - 1).gameName();
+            String whiteP = res.get(i - 1).whiteUsername();
+            whiteP = (whiteP != null) ? whiteP : "None";
+            String blackP = res.get(i - 1).blackUsername();
+            blackP = (blackP != null) ? blackP : "None";
+            games.append(num).append(gameName).append(" White Player: ").append(whiteP).append(", ").append(" Black Player: ").append(blackP).append('\n');
         }
+
 
         return games.toString();
     }
@@ -125,7 +133,7 @@ public class ChessClient   {
                 throw new ClientException("Invalid arguments");
             }
         } else {
-            playerColor="";
+            playerColor=null;
         }
 
         JoinGameRequest gameRequest = new JoinGameRequest(playerColor, gameID);
