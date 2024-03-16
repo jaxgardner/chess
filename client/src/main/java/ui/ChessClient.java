@@ -35,19 +35,23 @@ public class ChessClient   {
         return "Logged in";
     }
 
-    public String createGame(String... params) {
+    public String createGame(String... params) throws ClientException {
+        assertSignedIn();
         return "Created game";
     }
 
-    public String listGames(String... params) {
+    public String listGames(String... params) throws ClientException {
+        assertSignedIn();
         return "List games";
     }
 
-    public String joinGame() {
+    public String joinGame() throws ClientException {
+        assertSignedIn();
         return "Joined game";
     }
 
-    public String observeGame(String... params) {
+    public String observeGame(String... params) throws ClientException {
+        assertSignedIn();
         return "Observing game";
     }
 
@@ -81,6 +85,12 @@ public class ChessClient   {
             return "[LOGGED_OUT] >>> ";
         }
         return "[LOGGED_IN] >>> ";
+    }
+
+    private void assertSignedIn() throws ClientException {
+        if (state == ClientState.SIGNEDOUT) {
+            throw new ClientException("You must sign in");
+        }
     }
 
 }

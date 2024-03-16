@@ -21,7 +21,7 @@ public class Repl {
                 System.out.println(result);
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(msg);
+                System.out.println(chessClient.printStateInfo() + msg);
             }
         }
         System.out.println();
