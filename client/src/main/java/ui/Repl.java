@@ -3,7 +3,11 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class Repl {
-    private final ChessClient chessClient = new ChessClient();
+    private final ChessClient chessClient;
+
+    public Repl(String serverUrl) {
+        chessClient = new ChessClient(serverUrl);
+    }
 
     public void run() {
         System.out.println("Welcome to chess! Please choose from the following options: ");

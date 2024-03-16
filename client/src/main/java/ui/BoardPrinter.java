@@ -30,7 +30,7 @@ public class BoardPrinter {
          String coords;
          String nums;
 
-         if(teamColor.equals("white")) {
+         if(teamColor.equalsIgnoreCase("white")) {
              coords = COORDINATES_WHITE;
              nums = NUMBERS_WHITE;
          }
