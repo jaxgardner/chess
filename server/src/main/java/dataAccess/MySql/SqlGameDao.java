@@ -21,7 +21,7 @@ public class SqlGameDao implements GameDAO {
     private final String[] createStatements= {
         """
         CREATE TABLE IF NOT EXISTS gamedata (
-            `GameID` INT(4) PRIMARY KEY ,
+            `GameID` INT AUTO_INCREMENT PRIMARY KEY,
             `GameName` VARCHAR(255) NOT NULL,
             `WhiteUsername` VARCHAR(255),
             `BlackUsername` VARCHAR(255),
@@ -45,14 +45,13 @@ public class SqlGameDao implements GameDAO {
     public void addGame(GameData newGame) throws DataAccessException {
         if(!(newGame.gameID() == 0 || newGame.gameName().isEmpty() || newGame.game() == null )) {
             try(var conn = DatabaseManager.getConnection()) {
-                final var statement = "INSERT INTO gamedata (GameID, GameName, WhiteUsername, BlackUsername, Chessgame) VALUES (?, ?, ?, ?, ?)";
+                final var statement = "INSERT INTO gamedata (GameName, WhiteUsername, BlackUsername, Chessgame) VALUES (?, ?, ?, ?)";
                 try(var ps = conn.prepareStatement(statement)) {
-                    ps.setInt(1, newGame.gameID());
-                    ps.setString(2, newGame.gameName());
-                    ps.setString(3, newGame.whiteUsername());
-                    ps.setString(4, newGame.blackUsername());
+                    ps.setString(1, newGame.gameName());
+                    ps.setString(2, newGame.whiteUsername());
+                    ps.setString(3, newGame.blackUsername());
                     var json = new Gson().toJson(newGame.game());
-                    ps.setString(5, json);
+                    ps.setString(4, json);
 
                     ps.executeUpdate();
                 }

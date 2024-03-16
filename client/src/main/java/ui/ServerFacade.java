@@ -2,11 +2,14 @@ package ui;
 
 import com.google.gson.Gson;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.*;
+import java.util.List;
+import java.util.Map;
+
 import Exception.ClientException;
-import model.AuthData;
-import model.LoginRequest;
-import model.UserData;
+import com.google.gson.reflect.TypeToken;
+import model.*;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -36,8 +39,34 @@ public class ServerFacade {
 
     public String logoutUser() throws ClientException {
         String path = "/session";
-        makeRequest("DELETE", path, null, null);
-        return "Logged out!";
+        if(authToken != null) {
+            makeRequest("DELETE", path, null, null);
+            authToken = null;
+            return "Logged out!";
+        }
+        return "Unauthorized";
+    }
+
+    public String createGame(CreateGameRequest req) throws ClientException {
+        String path = "/game";
+
+        CreateGameResponse res = makeRequest("POST", path, req, CreateGameResponse.class);
+
+        return "Game created!";
+    }
+
+    public List<GameListResult> listGames() throws ClientException {
+        String path = "/game";
+
+        Map<String, List<GameListResult>> res = makeRequest("GET", path, null, Map.class);
+        return res.get("games");
+    }
+
+    public String joinGame(JoinGameRequest req) throws ClientException {
+        String path = "/game";
+
+        makeRequest("PUT", path, req, null);
+        return "Joined game!";
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ClientException {
@@ -71,8 +100,18 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ClientException {
         var status = http.getResponseCode();
+        String message = "failure: ";
         if (!isSuccessful(status)) {
-            throw new ClientException("failure: " + status);
+            if(status == 401) {
+                message = "Invalid username or password: ";
+            }
+            else if(status == 400) {
+                message = "Invalid request: ";
+            }
+            else if(status == 403) {
+                message = "Username already taken: ";
+            }
+            throw new ClientException(message + status);
         }
     }
 
@@ -82,7 +121,12 @@ public class ServerFacade {
             try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
+                    if(responseClass == Map.class) {
+                        Type listType = new TypeToken<Map<String, List<GameListResult>>>() {}.getType();
+                        response = new Gson().fromJson(reader, listType);
+                    } else {
+                        response = new Gson().fromJson(reader, responseClass);
+                    }
                 }
             }
         }

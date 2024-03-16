@@ -30,7 +30,7 @@ public class Server {
     private final GameService gameService;
     private final LoginService loginService;
     private final RegisterService registerService;
-    private final AdminService adminService;
+    public final AdminService adminService;
 
     public Server() {
         try {
@@ -153,7 +153,7 @@ public class Server {
         }
 
         res.status(200);
-        return  new Gson().toJson(Map.of("games", games));
+        return new Gson().toJson(Map.of("games", games));
     }
 
     private Object joinGame(Request req, Response res) throws DataAccessException {
@@ -174,7 +174,7 @@ public class Server {
         return new Gson().toJson(new Object());
     }
 
-    private Object clearAll(Request req, Response res) throws ServiceLogicException {
+    public Object clearAll(Request req, Response res) throws ServiceLogicException {
         adminService.clear();
         res.status(200);
         return new Gson().toJson(new Object());

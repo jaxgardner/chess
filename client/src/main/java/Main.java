@@ -1,5 +1,3 @@
-import chess.*;
-import ui.BoardPrinter;
 import ui.Repl;
 
 public class Main {

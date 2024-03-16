@@ -1,14 +1,15 @@
 package ui;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
-
 import Exception.ClientException;
 import model.*;
+
 public class ChessClient   {
     private ClientState state = ClientState.SIGNEDOUT;
     private final BoardPrinter chessPrinter;
-    private ServerFacade server;
+    private final ServerFacade server;
     public ChessClient(String serverUrl) {
         chessPrinter = new BoardPrinter();
         server = new ServerFacade(serverUrl);
@@ -68,7 +69,6 @@ public class ChessClient   {
         }
 
         LoginRequest loginRequest = new LoginRequest(username, password);
-        System.out.println(loginRequest);
         state = ClientState.SIGNEDIN;
 
         String result = server.loginUser(loginRequest);
@@ -87,13 +87,24 @@ public class ChessClient   {
             throw new ClientException("Invalid arguments");
         }
 
+        String result = server.createGame(new CreateGameRequest(gameName));
 
-        return "Created game";
+        return result;
     }
 
     public String listGames() throws ClientException {
         assertSignedIn();
-        return "List games";
+        List<GameListResult> res = server.listGames();
+        if(res.isEmpty()) {
+            return "No games to display";
+        }
+        StringBuilder games = new StringBuilder();
+
+        for(GameListResult game : res) {
+            games.append(game.gameID()).append(". ").append(game.gameName()).append('\n');
+        }
+
+        return games.toString();
     }
 
     public String joinGame(String... params) throws ClientException {
@@ -118,9 +129,12 @@ public class ChessClient   {
         }
 
         JoinGameRequest gameRequest = new JoinGameRequest(playerColor, gameID);
-        System.out.println(gameRequest);
-
-        return "Joined game";
+        String res = server.joinGame(gameRequest);
+        chessPrinter.printChessBoard("black");
+        System.out.println();
+        chessPrinter.printChessBoard("white");
+        System.out.println();
+        return res;
     }
 
     public String observeGame(String... params) throws ClientException {
@@ -133,15 +147,25 @@ public class ChessClient   {
             throw new ClientException("Invalid arguments");
         }
 
+        server.joinGame(new JoinGameRequest("", gameID) );
+
         chessPrinter.printChessBoard("white");
         System.out.println();
         chessPrinter.printChessBoard("black");
+        System.out.println();
         return "Observing game";
     }
 
-    public String logout() {
-        state = ClientState.SIGNEDOUT;
-        return "Logged out";
+    public String logout() throws ClientException {
+        assertSignedIn();
+        String result = server.logoutUser();
+
+        if(result.equals("Logged out!")) {
+            state = ClientState.SIGNEDOUT;
+        }
+        System.out.println(result);
+        System.out.println("Current options: ");
+        return help();
     }
 
     public String help() {
