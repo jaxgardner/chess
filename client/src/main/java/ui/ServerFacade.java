@@ -33,8 +33,9 @@ public class ServerFacade {
         AuthData auth = makeRequest("POST", path, req, AuthData.class);
         if(auth != null) {
             authToken = auth.authToken();
+            return "Logged in!";
         }
-        return "Logged in!";
+        return "Error";
     }
 
     public String logoutUser() throws ClientException {

@@ -73,7 +73,7 @@ public class GameService extends Service{
     }
 
     private void handleJoinGame(String username, GameData game, JoinGameRequest req) throws ServiceLogicException, DataAccessException {
-        if(req.playerColor().equals("WHITE")) {
+        if(req.playerColor().equalsIgnoreCase("WHITE")) {
             if(game.whiteUsername() == null || game.whiteUsername().equals(username)) {
                 gameDAO.updateGameWhite(username, req.gameID());
             } else {
