@@ -14,6 +14,7 @@ import dataAccess.MySql.SqlUserDao;
 import dataAccess.UserDAO;
 import exception.ServiceLogicException;
 import model.*;
+import server.websocket.WebsocketHandler;
 import service.AdminService;
 import service.GameService;
 import service.LoginService;
@@ -31,6 +32,7 @@ public class Server {
     private final LoginService loginService;
     private final RegisterService registerService;
     public final AdminService adminService;
+    private final WebsocketHandler websocketHandler;
 
     public Server() {
         try {
@@ -47,15 +49,16 @@ public class Server {
         loginService = new LoginService(userDAO, authDAO);
         registerService = new RegisterService(userDAO, authDAO);
         adminService = new AdminService(userDAO, authDAO, gameDAO);
+        websocketHandler = new WebsocketHandler();
     }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
-        Spark.init();
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/connect", websocketHandler);
 
         Spark.post("/user", this::registerNewUser);
         Spark.post("/session", this::loginUser);

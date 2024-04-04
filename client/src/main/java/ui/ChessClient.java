@@ -4,15 +4,25 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import Exception.ClientException;
+import chess.ChessGame;
 import model.*;
+import ui.websocket.NotificationHandler;
+import ui.websocket.WebSocketFacade;
 
 public class ChessClient   {
     private ClientState state = ClientState.SIGNEDOUT;
     private final BoardPrinter chessPrinter;
     private final ServerFacade server;
-    public ChessClient(String serverUrl) {
+    private final NotificationHandler notificationHandler;
+    private WebSocketFacade ws;
+    private final String serverUrl;
+
+
+    public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         chessPrinter = new BoardPrinter();
         server = new ServerFacade(serverUrl);
+        this.notificationHandler = notificationHandler;
+        this.serverUrl = serverUrl;
     }
 
     public String eval(String input) {
@@ -138,6 +148,17 @@ public class ChessClient   {
 
         JoinGameRequest gameRequest = new JoinGameRequest(playerColor, gameID);
         String res = server.joinGame(gameRequest);
+
+        ws = new WebSocketFacade(serverUrl, notificationHandler);
+        String authToken = server.getAuthToken();
+        ChessGame.TeamColor color;
+        if(playerColor.equalsIgnoreCase("white")) {
+            color = ChessGame.TeamColor.WHITE;
+        } else {
+            color = ChessGame.TeamColor.BLACK;
+        }
+        ws.joinGameAsPlayer(authToken, gameID, color);
+
         chessPrinter.printChessBoard("black");
         System.out.println();
         chessPrinter.printChessBoard("white");

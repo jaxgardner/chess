@@ -143,6 +143,10 @@ public class ServerFacade {
         return response;
     }
 
+    public String getAuthToken() {
+        return authToken;
+    }
+
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
