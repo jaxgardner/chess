@@ -65,18 +65,23 @@ public class ServerFacade {
 
     public String joinGame(JoinGameRequest req) throws ClientException {
         String path = "/game";
-        GameListResult game;
-        List<GameListResult> results = listGames();
-        try {
-            game = results.get(req.gameID() - 1);
-        } catch (IndexOutOfBoundsException e) {
-            throw new ClientException("Invalid game");
-        }
-        int gameId = game.gameID();
+
+        int gameId = getGameID(req.gameID());
         JoinGameRequest newReq = new JoinGameRequest(req.playerColor(), gameId);
 
         makeRequest("PUT", path, newReq, null);
         return "Joined game!";
+    }
+
+    int getGameID(int gameID) throws ClientException {
+        GameListResult game;
+        List<GameListResult> games = listGames();
+        try {
+            game = games.get(gameID - 1);
+        } catch(IndexOutOfBoundsException e) {
+            throw new ClientException("Invalid game");
+        }
+        return game.gameID();
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ClientException {

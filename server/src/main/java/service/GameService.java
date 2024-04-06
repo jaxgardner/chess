@@ -46,7 +46,7 @@ public class GameService extends Service{
     }
 
     private void addGame(String gameName, int gameID) throws ServiceLogicException {
-        GameData newGame = new GameData(gameID, null, null, gameName, new ChessGame());
+        GameData newGame = new GameData(gameID, "", "", gameName, new ChessGame());
         try {
             gameDAO.addGame(newGame);
         } catch (DataAccessException e) {
@@ -74,13 +74,13 @@ public class GameService extends Service{
 
     private void handleJoinGame(String username, GameData game, JoinGameRequest req) throws ServiceLogicException, DataAccessException {
         if(req.playerColor().equalsIgnoreCase("WHITE")) {
-            if(game.whiteUsername() == null || game.whiteUsername().equals(username)) {
+            if(game.whiteUsername().isEmpty() || game.whiteUsername().equals(username)) {
                 gameDAO.updateGameWhite(username, req.gameID());
             } else {
                 throw new ServiceLogicException(403, "Error: already taken");
             }
         } else {
-            if(game.blackUsername() == null || game.blackUsername().equals(username)) {
+            if(game.blackUsername().isEmpty() || game.blackUsername().equals(username)) {
                 gameDAO.updateGameBlack(username, req.gameID());
             } else {
                 throw new ServiceLogicException(403, "Error: already taken");

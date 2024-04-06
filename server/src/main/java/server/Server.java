@@ -39,7 +39,6 @@ public class Server {
             userDAO = new SqlUserDao();
             authDAO = new SqlAuthDao();
             gameDAO = new SqlGameDao();
-
         }
         catch (Throwable ex) {
             System.out.println(ex.getMessage());
@@ -49,7 +48,7 @@ public class Server {
         loginService = new LoginService(userDAO, authDAO);
         registerService = new RegisterService(userDAO, authDAO);
         adminService = new AdminService(userDAO, authDAO, gameDAO);
-        websocketHandler = new WebsocketHandler();
+        websocketHandler = new WebsocketHandler(gameDAO, authDAO);
     }
 
     public int run(int desiredPort) {

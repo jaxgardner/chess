@@ -1,6 +1,8 @@
 package server.websocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.management.Notification;
 import java.io.IOException;
@@ -43,6 +45,20 @@ public class ConnectionManager {
         // Clean up any connections that were left open.
         for (var c : removeList) {
             remove(gameID, c.username);
+        }
+    }
+
+    public void sendToOneUser(Integer gameID, String username, ServerMessage serverMessage) throws IOException {
+        var gameParticipants = gameConnections.get(gameID);
+        for (var c : gameParticipants) {
+            if (c.session.isOpen()) {
+                if (c.username.equals(username)) {
+                    String message = new Gson().toJson(serverMessage);
+                    c.send(message);
+                }
+            } else {
+                remove(gameID, username);
+            }
         }
     }
 }

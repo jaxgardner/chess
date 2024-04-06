@@ -11,15 +11,17 @@ import ui.websocket.WebSocketFacade;
 
 public class ChessClient   {
     private ClientState state = ClientState.SIGNEDOUT;
-    private final BoardPrinter chessPrinter;
+    private ClientGameState clientGameState = null;
+    private int currentGameID;
     private final ServerFacade server;
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
     private final String serverUrl;
+    private String playerGameColor;
+
 
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
-        chessPrinter = new BoardPrinter();
         server = new ServerFacade(serverUrl);
         this.notificationHandler = notificationHandler;
         this.serverUrl = serverUrl;
@@ -37,6 +39,7 @@ public class ChessClient   {
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
+                case "leave" -> leaveGame();
                 case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
@@ -127,7 +130,6 @@ public class ChessClient   {
 
     public String joinGame(String... params) throws ClientException {
         assertSignedIn();
-        String playerColor;
         int gameID;
 
         try {
@@ -137,32 +139,31 @@ public class ChessClient   {
         }
 
         if(params.length >= 2 ) {
-            playerColor = params[1];
+            playerGameColor = params[1];
 
-            if(!playerColor.equalsIgnoreCase("white") && !playerColor.equalsIgnoreCase("black")) {
+            if(!playerGameColor.equalsIgnoreCase("white") && !playerGameColor.equalsIgnoreCase("black")) {
                 throw new ClientException("Invalid arguments");
             }
         } else {
-            playerColor=null;
+            playerGameColor=null;
         }
 
-        JoinGameRequest gameRequest = new JoinGameRequest(playerColor, gameID);
+        JoinGameRequest gameRequest = new JoinGameRequest(playerGameColor, gameID);
         String res = server.joinGame(gameRequest);
 
         ws = new WebSocketFacade(serverUrl, notificationHandler);
         String authToken = server.getAuthToken();
         ChessGame.TeamColor color;
-        if(playerColor.equalsIgnoreCase("white")) {
+        if(playerGameColor.equalsIgnoreCase("white")) {
             color = ChessGame.TeamColor.WHITE;
         } else {
             color = ChessGame.TeamColor.BLACK;
         }
-        ws.joinGameAsPlayer(authToken, gameID, color);
+        int fourDigitID = server.getGameID(gameID);
+        currentGameID = fourDigitID;
+        ws.joinGameAsPlayer(authToken, fourDigitID, color);
+        clientGameState = ClientGameState.GAMEPLAYER;
 
-        chessPrinter.printChessBoard("black");
-        System.out.println();
-        chessPrinter.printChessBoard("white");
-        System.out.println();
         return res;
     }
 
@@ -176,13 +177,25 @@ public class ChessClient   {
             throw new ClientException("Invalid arguments");
         }
 
+        ws = new WebSocketFacade(serverUrl, notificationHandler);
         server.joinGame(new JoinGameRequest("", gameID) );
+        String authToken = server.getAuthToken();
+        int fourDigitID = server.getGameID(gameID);
+        currentGameID = fourDigitID;
+        ws.joinGameAsObserver(authToken, fourDigitID);
+        clientGameState = ClientGameState.GAMEOBSERVER;
 
-        chessPrinter.printChessBoard("white");
-        System.out.println();
-        chessPrinter.printChessBoard("black");
-        System.out.println();
         return "Observing game";
+    }
+
+    public String leaveGame() throws ClientException {
+        assertSignedIn();
+        String authToken = server.getAuthToken();
+
+        ws.leaveGame(authToken, currentGameID);
+        clientGameState = null;
+        playerGameColor = null;
+        return "You have left the game";
     }
 
     public String logout() throws ClientException {
@@ -206,6 +219,24 @@ public class ChessClient   {
                     help - with possible commands
                     """.indent(4);
         }
+        else if(state == ClientState.SIGNEDIN && clientGameState == ClientGameState.GAMEPLAYER) {
+            return """
+                    <position> = LETTER|COORDINATE (ex: A2)
+                    help - with possible commands
+                    redraw - chess board
+                    leave - game
+                    make move <position> <position> - chess piece
+                    resign - from game without leaving
+                    highlight <position> - legal moves
+                    """;
+        }
+        else if(state == ClientState.SIGNEDIN && clientGameState == ClientGameState.GAMEOBSERVER) {
+            return """
+                    help - with possible commands
+                    redraw - chess board
+                    leave - game
+                    """;
+        }
         return """
                 create <NAME> - a game
                 list - games
@@ -221,7 +252,17 @@ public class ChessClient   {
         if(state == ClientState.SIGNEDOUT) {
             return "[LOGGED_OUT] >>> ";
         }
+        else if(state == ClientState.SIGNEDIN && clientGameState == ClientGameState.GAMEPLAYER) {
+            return "[IN_GAMEPLAY] >>>";
+        }
+        else if(state == ClientState.SIGNEDIN && clientGameState == ClientGameState.GAMEOBSERVER) {
+            return "[OBSERVING_GAMEPLAY] >>>";
+        }
         return "[LOGGED_IN] >>> ";
+    }
+
+    public String getPlayerGameColor() {
+        return playerGameColor;
     }
 
     private void assertSignedIn() throws ClientException {

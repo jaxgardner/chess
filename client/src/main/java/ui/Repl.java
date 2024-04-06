@@ -1,4 +1,6 @@
 package ui;
+import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import ui.websocket.NotificationHandler;
 import webSocketMessages.serverMessages.ErrorMessage;
@@ -12,9 +14,11 @@ import static ui.EscapeSequences.*;
 
 public class Repl implements NotificationHandler {
     private final ChessClient chessClient;
+    private final BoardPrinter boardPrinter;
 
     public Repl(String serverUrl) {
         chessClient = new ChessClient(serverUrl, this);
+        boardPrinter = new BoardPrinter();
     }
 
     public void run() {
@@ -43,16 +47,29 @@ public class Repl implements NotificationHandler {
        ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
         switch (serverMessage.getServerMessageType()) {
             case LOAD_GAME:
-                LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-                System.out.println(loadGameMessage.getGame());
+                loadGamePrint(message);
+                break;
             case ERROR:
                 ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
                 System.out.println(errorMessage.getErrorMessage());
+                break;
             case NOTIFICATION:
                 NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
                 System.out.println(notificationMessage.getNotificationMessage());
+                break;
         }
 
+    }
+
+    private void loadGamePrint(String message) {
+        LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+        System.out.println();
+        System.out.println(chessClient.help());
+        System.out.println("Current board:");
+        System.out.println();
+        boardPrinter.setBoard(loadGameMessage.getGame());
+        boardPrinter.printChessBoard(chessClient.getPlayerGameColor());
+        System.out.print(chessClient.printStateInfo());
     }
 
 }

@@ -14,16 +14,20 @@ public class BoardPrinter {
     private static final int BOARD_SIZE = 10;
     private static final String LINE_SPACE = " ";
     private final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-    private static final String COORDINATES_BLACK = " abcdefgh ";
-    private static final String COORDINATES_WHITE = " hgfedcba ";
-    private static final String NUMBERS_WHITE = "12345678";
-    private static final String NUMBERS_BLACK = "87654321";
-    private final ChessBoard board;
+    private static final String COORDINATES_WHITE = " abcdefgh ";
+    private static final String COORDINATES_BLACK = " hgfedcba ";
+    private static final String NUMBERS_BLACK = "12345678";
+    private static final String NUMBERS_WHITE = "87654321";
+    private ChessBoard board;
 
 
     public BoardPrinter() {
         board = new ChessBoard();
         board.resetBoard();
+    }
+
+    public void setBoard(ChessBoard board) {
+        this.board = new ChessBoard(board);
     }
 
     public void printChessBoard(String teamColor) {
@@ -90,7 +94,7 @@ public class BoardPrinter {
     }
 
     private ChessPosition getPosition(String nums, int i , int j) {
-       if(nums.equals(NUMBERS_BLACK)) {
+       if(nums.equals(NUMBERS_WHITE)) {
             i = 9 - i;
             return new ChessPosition(i, j);
        }

@@ -100,6 +100,27 @@ public class SqlGameDao implements GameDAO {
         return null;
     }
 
+    public void updateGameboard(int gameID, ChessGame game) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            final var statement = """
+                    UPDATE gamedata
+                    SET Chessgame=?
+                    WHERE GameID=?;
+                    """;
+            try (var ps = conn.prepareStatement(statement)) {
+                var chessgameString = new Gson().toJson(game);
+                ps.setString(1, chessgameString);
+                ps.setInt(2, gameID);
+
+                ps.executeUpdate();
+            }
+
+        }
+        catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
     public ArrayList<GameData> listGames() throws DataAccessException {
         var result = new ArrayList<GameData>();
         try (var conn = DatabaseManager.getConnection()) {
@@ -118,7 +139,7 @@ public class SqlGameDao implements GameDAO {
     }
 
     public void updateGameWhite(String username, int gameID) throws DataAccessException {
-        if(!username.isEmpty()) {
+        if(username != null) {
             try(var conn = DatabaseManager.getConnection()) {
                 final var statement = "UPDATE gamedata SET WhiteUsername=? WHERE gameID=?";
                 try(var ps = conn.prepareStatement(statement)) {
@@ -137,7 +158,7 @@ public class SqlGameDao implements GameDAO {
     }
 
     public void updateGameBlack(String username, int gameID) throws DataAccessException {
-        if(!username.isEmpty()) {
+        if(username != null) {
             try(var conn = DatabaseManager.getConnection()) {
                 final var statement = "UPDATE gamedata SET BlackUsername=? WHERE gameID=?";
                 try(var ps = conn.prepareStatement(statement)) {
