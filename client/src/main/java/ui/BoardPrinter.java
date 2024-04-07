@@ -14,8 +14,8 @@ public class BoardPrinter {
     private static final int BOARD_SIZE = 10;
     private static final String LINE_SPACE = " ";
     private final PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-    private static final String COORDINATES_WHITE = " abcdefgh ";
-    private static final String COORDINATES_BLACK = " hgfedcba ";
+    private static final String COORDINATES_WHITE = " ABCDEFGH ";
+    private static final String COORDINATES_BLACK = " ABCDEFGH ";
     private static final String NUMBERS_BLACK = "12345678";
     private static final String NUMBERS_WHITE = "87654321";
     private ChessBoard board;

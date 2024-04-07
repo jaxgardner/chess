@@ -220,11 +220,7 @@ public class ChessClient   {
             int columnNum;
             var columnLetter = position.charAt(0);
             var letter = Character.toUpperCase(columnLetter);
-            if(playerGameColor.equals("white")) {
-                columnNum =  (int) letter - (int) 'A' + 1;
-            } else {
-                columnNum =  9 -((int) letter - (int) 'A' + 1);
-            }
+            columnNum =  (int) letter - (int) 'A' + 1;
             var rowNum = Character.getNumericValue(position.charAt(1));
             return new ChessPosition(rowNum, columnNum);
         } catch (Exception e) {

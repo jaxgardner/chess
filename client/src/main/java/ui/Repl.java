@@ -50,15 +50,12 @@ public class Repl implements NotificationHandler {
                 loadGamePrint(message);
                 break;
             case ERROR:
-                ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
-                System.out.println(errorMessage.getErrorMessage());
+                printErrorMessage(message);
                 break;
             case NOTIFICATION:
-                NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
-                System.out.println(notificationMessage.getNotificationMessage());
+                printNotification(message);
                 break;
         }
-
     }
 
     private void loadGamePrint(String message) {
@@ -69,6 +66,21 @@ public class Repl implements NotificationHandler {
         System.out.println();
         boardPrinter.setBoard(loadGameMessage.getGame());
         boardPrinter.printChessBoard(chessClient.getPlayerGameColor());
+        System.out.println();
+        System.out.print(chessClient.printStateInfo());
+    }
+
+    private void printNotification(String message) {
+        NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
+        System.out.println();
+        System.out.println(notificationMessage.getNotificationMessage());
+        System.out.print(chessClient.printStateInfo());
+    }
+
+    private void printErrorMessage(String message) {
+        ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+        System.out.println();
+        System.out.println(errorMessage.getErrorMessage());
         System.out.print(chessClient.printStateInfo());
     }
 
