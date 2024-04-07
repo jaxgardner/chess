@@ -29,9 +29,8 @@ public class BoardPrinter {
         this.board = new ChessBoard(board);
     }
 
-    public void printPossibleMoves(ChessPosition position, String teamColor) {
+    public void printPossibleMoves(ChessPosition position,  Collection<ChessMove> possibleMoves, String teamColor) {
         if(board.getPiece(position) != null) {
-            ChessPiece piece = board.getPiece(position);
             String coords;
             String nums;
 
@@ -45,7 +44,7 @@ public class BoardPrinter {
             }
 
             printLetters(coords);
-            printCheckersHighlighted(nums, piece, position);
+            printCheckersHighlighted(nums, possibleMoves);
             printLetters(coords);
 
         } else {
@@ -71,8 +70,7 @@ public class BoardPrinter {
          printLetters(coords);
     }
 
-    private void printCheckersHighlighted(String nums, ChessPiece piece, ChessPosition position) {
-        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, position);
+    private void printCheckersHighlighted(String nums, Collection<ChessMove> possibleMoves) {
         ArrayList<ChessPosition> possiblePositions = new ArrayList<>();
         for(var move: possibleMoves) {
             possiblePositions.add(move.getEndPosition());

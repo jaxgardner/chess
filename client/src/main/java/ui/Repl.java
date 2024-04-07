@@ -1,5 +1,7 @@
 package ui;
 import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import ui.websocket.NotificationHandler;
@@ -10,6 +12,7 @@ import webSocketMessages.serverMessages.ServerMessage;
 import Exception.ClientException;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Scanner;
 
 public class Repl implements NotificationHandler {
@@ -100,8 +103,11 @@ public class Repl implements NotificationHandler {
         var tokens = line.toLowerCase().split(" ");
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         try {
+            ChessGame tempGame = new ChessGame();
+            tempGame.setBoard(currentBoard);
             ChessPosition position = chessClient.convertPosition(params[0]);
-            boardPrinter.printPossibleMoves(position, "white");
+            Collection<ChessMove> possibleMoves = tempGame.validMoves(position);
+            boardPrinter.printPossibleMoves(position, possibleMoves, chessClient.getPlayerGameColor());
             System.out.println();
         } catch (ClientException e) {
             System.out.println("Invalid position");

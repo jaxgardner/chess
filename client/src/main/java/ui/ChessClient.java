@@ -227,7 +227,6 @@ public class ChessClient   {
         }
     }
 
-
     public String logout() throws ClientException {
         assertSignedIn();
         String result = server.logoutUser();
