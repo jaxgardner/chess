@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessGame;
 import dataAccess.Exceptions.DataAccessException;
 import model.GameData;
 
@@ -16,6 +17,8 @@ public interface GameDAO {
     public void updateGameWhite(String username, int gameID) throws DataAccessException;
 
     public void updateGameBlack(String username, int gameID) throws DataAccessException;
+
+    public void updateGameboard(int gameID, ChessGame game) throws DataAccessException;
 
     public void clear() throws DataAccessException;
 

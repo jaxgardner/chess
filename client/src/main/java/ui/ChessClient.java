@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import Exception.ClientException;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import model.*;
 import ui.websocket.NotificationHandler;
 import ui.websocket.WebSocketFacade;
@@ -39,6 +41,7 @@ public class ChessClient   {
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
+                case "make-move" -> makeMove(params);
                 case "leave" -> leaveGame();
                 case "logout" -> logout();
                 case "quit" -> "quit";
@@ -198,6 +201,37 @@ public class ChessClient   {
         return "You have left the game";
     }
 
+    public String makeMove(String... params) throws ClientException {
+        if(params.length == 2) {
+            String position1 = params[0];
+            String position2 = params[1];
+            ChessPosition chessP1 = convertPosition(position1);
+            ChessPosition chessP2 = convertPosition(position2);
+            var chessMove = new ChessMove(chessP1, chessP2, null);
+
+            ws.makeMove(server.getAuthToken(), currentGameID, chessMove);
+            return "";
+        }
+        return "Invalid arguments";
+    }
+
+    public ChessPosition convertPosition(String position) throws ClientException {
+        try {
+            int columnNum;
+            var columnLetter = position.charAt(0);
+            var letter = Character.toUpperCase(columnLetter);
+            if(playerGameColor.equals("white")) {
+                columnNum =  (int) letter - (int) 'A' + 1;
+            } else {
+                columnNum =  9 -((int) letter - (int) 'A' + 1);
+            }
+            var rowNum = Character.getNumericValue(position.charAt(1));
+            return new ChessPosition(rowNum, columnNum);
+        } catch (Exception e) {
+            throw new ClientException("Invalid coordinates");
+        }
+    }
+
     public String logout() throws ClientException {
         assertSignedIn();
         String result = server.logoutUser();
@@ -253,10 +287,10 @@ public class ChessClient   {
             return "[LOGGED_OUT] >>> ";
         }
         else if(state == ClientState.SIGNEDIN && clientGameState == ClientGameState.GAMEPLAYER) {
-            return "[IN_GAMEPLAY] >>>";
+            return "[IN_GAMEPLAY] >>> ";
         }
         else if(state == ClientState.SIGNEDIN && clientGameState == ClientGameState.GAMEOBSERVER) {
-            return "[OBSERVING_GAMEPLAY] >>>";
+            return "[OBSERVING_GAMEPLAY] >>> ";
         }
         return "[LOGGED_IN] >>> ";
     }

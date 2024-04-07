@@ -29,13 +29,14 @@ public class ConnectionManager {
         gameParticipants.removeIf(participant -> participant.username.equals(username));
     }
 
-    public void broadcast(Integer gameID, String excludeUsername, Notification notification) throws IOException {
+    public void broadcast(Integer gameID, String excludeUsername, ServerMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         var gameParticipants = gameConnections.get(gameID);
         for (var c : gameParticipants) {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUsername)) {
-                    c.send(notification.toString());
+                    String message = new Gson().toJson(serverMessage);
+                    c.send(message);
                 }
             } else {
                 removeList.add(c);

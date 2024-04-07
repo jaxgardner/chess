@@ -1,5 +1,6 @@
 package dataAccess.Memory;
 
+import chess.ChessGame;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
@@ -67,6 +68,11 @@ public class MemGameDao implements GameDAO {
             throw new DataAccessException("Cannot connect to server");
         }
     }
+
+    public void updateGameboard(int gameID, ChessGame game) throws DataAccessException {
+        System.out.println("Updating game board");
+    }
+
 
     public void clear() throws DataAccessException {
         try {

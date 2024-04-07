@@ -1,17 +1,20 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.AuthDAO;
 import dataAccess.Exceptions.DataAccessException;
 import dataAccess.GameDAO;
-import dataAccess.MySql.SqlGameDao;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
+import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
@@ -41,7 +44,7 @@ public class WebsocketHandler {
         switch (action.getCommandType()) {
             case JOIN_PLAYER -> joinPlayer((JoinPlayerCommand) action, session);
             case JOIN_OBSERVER -> joinObserver((JoinObserverCommand) action, session);
-            case MAKE_MOVE -> makeMove(action);
+            case MAKE_MOVE -> makeMove((MakeMoveCommand) action);
             case LEAVE -> leave((LeaveCommand) action);
             case RESIGN -> resign(action);
         }
@@ -60,6 +63,8 @@ public class WebsocketHandler {
                 }
                 LoadGameMessage gameMessage = createLoadGameMessage(game);
                 connections.sendToOneUser(game.gameID(), username, gameMessage);
+                NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined game" );
+                connections.broadcast(game.gameID(), username, notificationMessage );
             } catch (DataAccessException | IOException e) {
                 // Switch for error message
                 System.out.println("Unable to get game");
@@ -78,6 +83,8 @@ public class WebsocketHandler {
                 connections.add(game.gameID(), username, session);
                 LoadGameMessage gameMessage = createLoadGameMessage(game);
                 connections.sendToOneUser(game.gameID(), username, gameMessage);
+                NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + "has joined game" );
+                connections.broadcast(game.gameID(), username, notificationMessage );
             } catch (DataAccessException | IOException e) {
                 // Switch for error message
                 System.out.println("Unable to get game");
@@ -104,8 +111,46 @@ public class WebsocketHandler {
         }
     }
 
-    private void makeMove(UserGameCommand command) {
-        System.out.println(command);
+    private void makeMove(MakeMoveCommand command) {
+        AuthData auth = verifyAuthToken(command.getAuthString());
+        String username;
+        if(auth != null) {
+            username = auth.username();
+            try {
+                GameData gameData= sqlGameDao.getGame(command.getGameID());
+                ChessGame game = gameData.game();
+                if(correctTurn(username, gameData)) {
+                    ServerMessage message = evaluateMove(command.getGameID(), game, command.getChessMove());
+                    connections.sendToOneUser(command.getGameID(), username, message);
+                }
+            } catch (DataAccessException | IOException e){
+                System.out.println("Server Error");
+            }
+        }
+    }
+
+    private boolean correctTurn(String username, GameData gameData) {
+        ChessGame.TeamColor currentColor = gameData.game().getTeamTurn();
+
+        if(gameData.blackUsername() != null && gameData.blackUsername().equals(username) && currentColor == ChessGame.TeamColor.BLACK) {
+            return true;
+        } else if(gameData.whiteUsername() != null && gameData.whiteUsername().equals(username) && currentColor == ChessGame.TeamColor.WHITE) {
+            return true;
+        }
+        return false;
+    }
+
+    private ServerMessage evaluateMove(int gameID, ChessGame game, ChessMove move) {
+        try{
+            game.makeMove(move);
+            sqlGameDao.updateGameboard(gameID, game);
+            return new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game.getBoard());
+        } catch (InvalidMoveException e) {
+            System.out.println(e.getMessage());
+        } catch (DataAccessException e) {
+            System.out.println("Unable to connect to database");
+        }
+        return new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to make move");
     }
 
     private void resign(UserGameCommand command) {
