@@ -11,6 +11,7 @@ import java.util.HashSet;
  */
 public class ChessGame {
 
+    private boolean isOver = false;
     private ChessBoard gameBoard;
     private TeamColor currentTurn;
     private ChessPosition kingBlackPosition;
@@ -36,6 +37,14 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         currentTurn = team;
+    }
+
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean over) {
+        isOver = over;
     }
 
     /**

@@ -41,6 +41,7 @@ public class ChessClient   {
                 case "join" -> joinGame(params);
                 case "observe" -> observeGame(params);
                 case "make-move" -> makeMove(params);
+                case "resign" -> resign();
                 case "leave" -> leaveGame();
                 case "logout" -> logout();
                 case "quit" -> "quit";
@@ -190,6 +191,14 @@ public class ChessClient   {
         return "Observing game";
     }
 
+    public String resign() throws ClientException {
+        assertSignedIn();
+        String authToken = server.getAuthToken();
+
+        ws.resign(authToken, currentGameID);
+        return "You have resigned from the game";
+    }
+
     public String leaveGame() throws ClientException {
         assertSignedIn();
         String authToken = server.getAuthToken();
@@ -220,6 +229,11 @@ public class ChessClient   {
             var columnLetter = position.charAt(0);
             var letter = Character.toUpperCase(columnLetter);
             columnNum =  (int) letter - (int) 'A' + 1;
+
+            if(columnNum < 1 || columnNum > 8) {
+                throw new ClientException("Invalid coordinates");
+            }
+
             var rowNum = Character.getNumericValue(position.charAt(1));
             return new ChessPosition(rowNum, columnNum);
         } catch (Exception e) {

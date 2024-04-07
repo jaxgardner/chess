@@ -71,7 +71,6 @@ public class Repl implements NotificationHandler {
         }
     }
 
-
     private void loadGamePrint(String message) {
         LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
         currentBoard = loadGameMessage.getGame();
@@ -112,7 +111,5 @@ public class Repl implements NotificationHandler {
         } catch (ClientException e) {
             System.out.println("Invalid position");
         }
-
     }
-
 }
