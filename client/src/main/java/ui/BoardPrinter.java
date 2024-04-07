@@ -1,14 +1,13 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import static ui.EscapeSequences.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class BoardPrinter {
     private static final int BOARD_SIZE = 10;
@@ -30,6 +29,30 @@ public class BoardPrinter {
         this.board = new ChessBoard(board);
     }
 
+    public void printPossibleMoves(ChessPosition position, String teamColor) {
+        if(board.getPiece(position) != null) {
+            ChessPiece piece = board.getPiece(position);
+            String coords;
+            String nums;
+
+            if(teamColor.equalsIgnoreCase("white")) {
+                coords = COORDINATES_WHITE;
+                nums = NUMBERS_WHITE;
+            }
+            else {
+                coords = COORDINATES_BLACK;
+                nums = NUMBERS_BLACK;
+            }
+
+            printLetters(coords);
+            printCheckersHighlighted(nums, piece, position);
+            printLetters(coords);
+
+        } else {
+            System.out.println("Invalid position");
+        }
+    }
+
     public void printChessBoard(String teamColor) {
          String coords;
          String nums;
@@ -46,7 +69,32 @@ public class BoardPrinter {
          printLetters(coords);
          printCheckers(nums);
          printLetters(coords);
-     }
+    }
+
+    private void printCheckersHighlighted(String nums, ChessPiece piece, ChessPosition position) {
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, position);
+        ArrayList<ChessPosition> possiblePositions = new ArrayList<>();
+        for(var move: possibleMoves) {
+            possiblePositions.add(move.getEndPosition());
+        }
+
+        for (int i = 0; i < 8; i++) {
+            out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + nums.charAt(i) + LINE_SPACE + "\u001B[0m");
+            for (int j = 0; j < 8; j++) {
+                ChessPosition currentPosition = getPosition(nums, i + 1, j + 1);
+                if(possiblePositions.contains(currentPosition)) {
+                    printPieceHighlight(currentPosition);
+                } else {
+                    printPiece(currentPosition);
+                }
+            }
+            out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + nums.charAt(i) + LINE_SPACE + "\u001B[0m");
+            out.println();
+        }
+
+    }
+
+
 
     private void printCheckers(String nums) {
         for (int i = 0; i < 8; i++) {
@@ -66,6 +114,17 @@ public class BoardPrinter {
             out.print(SET_BG_COLOR_DARK_GREY + LINE_SPACE + coordinates.charAt(i) + LINE_SPACE + "\u001B[0m");
         }
         out.println();
+    }
+
+    private void printPieceHighlight(ChessPosition position) {
+        ChessPiece piece = board.getPiece(position);
+
+        if(piece != null) {
+            out.print(getBGColorHighlight()  + getPieceColor(piece) + LINE_SPACE + piece + LINE_SPACE + "\u001B[0m");
+        }
+        else {
+            out.print(getBGColorHighlight()  + LINE_SPACE.repeat(3) + "\u001B[0m");
+        }
     }
 
     private void printPiece(ChessPosition position) {
@@ -91,6 +150,10 @@ public class BoardPrinter {
             return SET_BG_COLOR_LIGHT_GREY;
         }
         return SET_BG_COLOR_BLACK;
+    }
+
+    private String getBGColorHighlight() {
+        return SET_BG_COLOR_MAGENTA;
     }
 
     private ChessPosition getPosition(String nums, int i , int j) {

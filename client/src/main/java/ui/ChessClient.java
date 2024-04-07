@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import Exception.ClientException;
+import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
@@ -20,8 +21,6 @@ public class ChessClient   {
     private WebSocketFacade ws;
     private final String serverUrl;
     private String playerGameColor;
-
-
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
@@ -228,6 +227,7 @@ public class ChessClient   {
         }
     }
 
+
     public String logout() throws ClientException {
         assertSignedIn();
         String result = server.logoutUser();
@@ -238,6 +238,13 @@ public class ChessClient   {
         System.out.println(result);
         System.out.println("Current options: ");
         return help();
+    }
+
+    public void printBoard(BoardPrinter boardPrinter) {
+        System.out.println("Current board:");
+        System.out.println();
+        boardPrinter.printChessBoard(getPlayerGameColor());
+        System.out.println();
     }
 
     public String help() {

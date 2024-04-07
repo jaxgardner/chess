@@ -1,20 +1,22 @@
 package ui;
 import chess.ChessBoard;
-import chess.ChessGame;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import ui.websocket.NotificationHandler;
 import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.LoadGameMessage;
 import webSocketMessages.serverMessages.NotificationMessage;
 import webSocketMessages.serverMessages.ServerMessage;
-import webSocketMessages.userCommands.*;
+import Exception.ClientException;
 
+import java.util.Arrays;
 import java.util.Scanner;
-import static ui.EscapeSequences.*;
 
 public class Repl implements NotificationHandler {
     private final ChessClient chessClient;
     private final BoardPrinter boardPrinter;
+    private ChessBoard currentBoard;
+
 
     public Repl(String serverUrl) {
         chessClient = new ChessClient(serverUrl, this);
@@ -33,8 +35,16 @@ public class Repl implements NotificationHandler {
             String line = scanner.nextLine();
 
             try {
-                result = chessClient.eval(line);
-                System.out.println(result);
+                if(line.equals("redraw")) {
+                    chessClient.printBoard(boardPrinter);
+                }
+                else if(line.contains("highlight")) {
+                    highlight(line);
+                }
+                else {
+                    result = chessClient.eval(line);
+                    System.out.println(result);
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.println(chessClient.printStateInfo() + msg);
@@ -58,8 +68,10 @@ public class Repl implements NotificationHandler {
         }
     }
 
+
     private void loadGamePrint(String message) {
         LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+        currentBoard = loadGameMessage.getGame();
         System.out.println();
         System.out.println(chessClient.help());
         System.out.println("Current board:");
@@ -82,6 +94,19 @@ public class Repl implements NotificationHandler {
         System.out.println();
         System.out.println(errorMessage.getErrorMessage());
         System.out.print(chessClient.printStateInfo());
+    }
+
+    private void highlight(String line) {
+        var tokens = line.toLowerCase().split(" ");
+        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        try {
+            ChessPosition position = chessClient.convertPosition(params[0]);
+            boardPrinter.printPossibleMoves(position, "white");
+            System.out.println();
+        } catch (ClientException e) {
+            System.out.println("Invalid position");
+        }
+
     }
 
 }
