@@ -20,7 +20,7 @@ public class ChessClient   {
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
     private final String serverUrl;
-    private String playerGameColor;
+    private String playerGameColor = null;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);

@@ -94,7 +94,7 @@ public class GameService extends Service{
                 String username = authDAO.getAuth(authToken).username();
                 GameData game = gameDAO.getGame(req.gameID());
                 if(game != null) {
-                    if(req.playerColor() != null) {
+                    if(!req.playerColor().isEmpty()) {
                         handleJoinGame(username, game, req);
                     }
                     return true;

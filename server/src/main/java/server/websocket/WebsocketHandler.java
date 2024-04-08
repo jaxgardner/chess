@@ -113,7 +113,7 @@ public class WebsocketHandler {
                     connections.add(game.gameID(), username, session);
                     LoadGameMessage gameMessage = createLoadGameMessage(game);
                     connections.sendToOneUser(game.gameID(), username, gameMessage);
-                    NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + "has joined game as observer" );
+                    NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined game as observer" );
                     connections.broadcast(game.gameID(), username, notificationMessage );
                 } else {
                     ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Error: game does not exist");
@@ -178,18 +178,30 @@ public class WebsocketHandler {
                             connections.broadcast(command.getGameID(), username, makeMoveMessage);
                         }
 
-                        String checkGameUsername = isInCheck(gameData, username);
-
+                        String checkGameUsername = isInStalemate(gameData, username);
                         if (checkGameUsername != null) {
-                            NotificationMessage message1 = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkGameUsername + " is in check");
-                            connections.broadcast(command.getGameID(), "", message1);
-                        }
-                        checkGameUsername = isInCheckmate(gameData, username);
-                        if (checkGameUsername != null) {
-                            NotificationMessage message1 = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkGameUsername + " is in checkmate");
+                            NotificationMessage message1 = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkGameUsername + " is in stalemate. Game is over.");
                             connections.broadcast(command.getGameID(), "", message1);
                             game.setOver(true);
                             sqlGameDao.updateGameboard(command.getGameID(), game);
+                        }
+
+                        if(checkGameUsername == null) {
+                            checkGameUsername = isInCheckmate(gameData, username);
+                            if (checkGameUsername != null) {
+                                NotificationMessage message1 = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkGameUsername + " is in checkmate. Game is over.");
+                                connections.broadcast(command.getGameID(), "", message1);
+                                game.setOver(true);
+                                sqlGameDao.updateGameboard(command.getGameID(), game);
+                            }
+                        }
+
+                        if(checkGameUsername == null) {
+                            checkGameUsername = isInCheck(gameData, username);
+                            if (checkGameUsername != null) {
+                                NotificationMessage message1 = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkGameUsername + " is in check");
+                                connections.broadcast(command.getGameID(), "", message1);
+                            }
                         }
                     } else {
                         ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Not your turn");
@@ -257,6 +269,18 @@ public class WebsocketHandler {
         return null;
     }
 
+    private String isInStalemate(GameData gameData, String username) {
+        String whiteUsername = gameData.whiteUsername();
+        String blackUsername = gameData.blackUsername();
+
+        if(whiteUsername.equals(username) && gameData.game().isInStalemate(ChessGame.TeamColor.BLACK)) {
+            return blackUsername;
+        } else if(blackUsername.equals(username) && gameData.game().isInStalemate(ChessGame.TeamColor.WHITE)) {
+            return whiteUsername;
+        }
+        return null;
+    }
+
     private NotificationMessage getMakeMoveMessage(String username, ChessMove chessMove) {
         String message = username + " moved piece from " + chessMove.toString();
         return new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
@@ -285,8 +309,6 @@ public class WebsocketHandler {
         }
         return new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to make move");
     }
-
-
 
     private AuthData verifyAuthToken(String authToken) {
         try {
