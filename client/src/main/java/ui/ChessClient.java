@@ -4,10 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import Exception.ClientException;
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import model.*;
 import ui.websocket.NotificationHandler;
 import ui.websocket.WebSocketFacade;
@@ -210,17 +207,32 @@ public class ChessClient   {
     }
 
     public String makeMove(String... params) throws ClientException {
-        if(params.length == 2) {
+        if(params.length >= 2) {
             String position1 = params[0];
             String position2 = params[1];
             ChessPosition chessP1 = convertPosition(position1);
             ChessPosition chessP2 = convertPosition(position2);
-            var chessMove = new ChessMove(chessP1, chessP2, null);
+
+            ChessPiece.PieceType promotionPiece = null;
+            if(params.length == 3) {
+                promotionPiece = getPromotionPiece(params[2]);
+            }
+
+            var chessMove = new ChessMove(chessP1, chessP2, promotionPiece);
 
             ws.makeMove(server.getAuthToken(), currentGameID, chessMove);
             return "";
         }
         return "Invalid arguments";
+    }
+
+    private ChessPiece.PieceType getPromotionPiece(String piece) throws ClientException {
+        return switch (piece.toLowerCase()) {
+            case ("q") -> ChessPiece.PieceType.QUEEN;
+            case ("n") -> ChessPiece.PieceType.KNIGHT;
+            case ("b") -> ChessPiece.PieceType.BISHOP;
+            default -> throw new ClientException("Invalid arguments");
+        };
     }
 
     public ChessPosition convertPosition(String position) throws ClientException {
