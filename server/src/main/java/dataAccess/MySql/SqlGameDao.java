@@ -18,7 +18,7 @@ public class SqlGameDao implements GameDAO {
         configureDatabase();
     }
 
-    private final String[] createStatements= {
+    private final String[] createStatement= {
         """
         CREATE TABLE IF NOT EXISTS gamedata (
             `GameID` INT(4) PRIMARY KEY ,
@@ -32,7 +32,7 @@ public class SqlGameDao implements GameDAO {
 
     private void configureDatabase() throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()) {
-            for(var statement: createStatements) {
+            for(var statement: createStatement) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
