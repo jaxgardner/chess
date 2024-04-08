@@ -144,8 +144,6 @@ public class ChessClient   {
             if(!playerGameColor.equalsIgnoreCase("white") && !playerGameColor.equalsIgnoreCase("black")) {
                 throw new ClientException("Invalid arguments");
             }
-        } else {
-            playerGameColor=null;
         }
 
         JoinGameRequest gameRequest = new JoinGameRequest(playerGameColor, gameID);
@@ -287,7 +285,7 @@ public class ChessClient   {
                     help - with possible commands
                     redraw - chess board
                     leave - game
-                    make move <position> <position> - chess piece
+                    make move <position> <position> <promotion|optional> - chess piece
                     resign - from game without leaving
                     highlight <position> - legal moves
                     """;
@@ -302,7 +300,7 @@ public class ChessClient   {
         return """
                 create <NAME> - a game
                 list - games
-                join <ID> [WHITE|BLACK|<empty>] - a game
+                join <ID> [WHITE|BLACK] - a game
                 observe <ID> - a game
                 logout - when you are done
                 quit - stop the program
